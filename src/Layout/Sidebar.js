@@ -11,6 +11,7 @@ const Sidebar = () => {
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     const [menuOpen, setMenuOpen] = useState({});  // Adicionado aqui
 
+    
     const { idUsuario } = JSON.parse(localStorage.getItem("user_token"))
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
@@ -179,7 +180,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.revendedores && (
                                                     <ul className="ms-3">
-                                                        {dadosInfoUser && dadosInfoUser.id_dono === 0 ?
+                                                        {dadosInfoUser && dadosInfoUser.id_dono === '0' ?
                                                             (
                                                                 <li>
                                                                     <Link to="/novo-revendedor">

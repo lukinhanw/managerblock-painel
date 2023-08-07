@@ -14,6 +14,15 @@ const NovoTeste = () => {
         });
     }, [idUsuario]);
 
+    const [dadosInfoServidores, setDadosInfoServidores] = useState(null);
+    useEffect(() => {
+        Api.get(`servidores`).then((response) => {
+            setDadosInfoServidores(response.data);
+        });
+
+    }, []);
+
+
     const {
         register,
         handleSubmit,
@@ -102,13 +111,14 @@ const NovoTeste = () => {
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-3 col-form-label">
-                                        Selecione o Servidor
+                                        Selecione o Servidor *
                                     </label>
                                     <div className="col-sm-9">
                                         <select className="form-control" {...register("servidor", { required: true })}>
                                             <option value="">Selecione...</option>
-                                            <option value="Five">Five</option>
-                                            <option value="P2Cine">P2cine</option>
+                                            {dadosInfoServidores && dadosInfoServidores.map(item => (
+                                                <option key={item.nome} value={item.nome}>{item.nome}</option>
+                                            ))}
                                         </select>
                                         {errors.servidor && <small>Seleção de servidor é obrigatória.</small>}
                                     </div>
