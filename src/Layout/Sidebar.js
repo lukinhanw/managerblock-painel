@@ -180,7 +180,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.revendedores && (
                                                     <ul className="ms-3">
-                                                        {dadosInfoUser && dadosInfoUser.id_dono === '0' ?
+                                                        {dadosInfoUser && dadosInfoUser.id_dono === 0 ?
                                                             (
                                                                 <li>
                                                                     <Link to="/novo-revendedor">
