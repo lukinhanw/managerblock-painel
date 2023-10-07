@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { format, parseISO } from 'date-fns';
+import { differenceInDays, format, parseISO } from 'date-fns';
 
 import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
@@ -163,13 +163,31 @@ const ListarCodigos = () => {
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             let formattedDate = value;
+                            let dateClass = '';
+
                             if (value !== '-') {
+                                const currentDate = new Date();
                                 const dateObj = parseISO(value);
-                                formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                const daysDifference = differenceInDays(dateObj, currentDate);
+
+                                if (daysDifference < 0) {
+                                    formattedDate = "Expirado";
+                                    dateClass = "text-danger";
+                                } else if (daysDifference <= 3) {
+                                    dateClass = "text-danger";
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                } else if (daysDifference <= 7) {
+                                    dateClass = "text-warning";
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                } else {
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                }
+
                             }
+
                             return (
-                                <div className="d-flex justify-content-center">
-                                    <Link to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
+                                <div className={`d-flex justify-content-center`}>
+                                    <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
                                 </div>
                             )
                         }
@@ -280,7 +298,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                <Table columns={columns} data={data} />
+                                <Table columns={columns} data={data} lenght={10} />
                             </div>
                         </div>
                     </div>

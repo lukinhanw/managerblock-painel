@@ -2,12 +2,12 @@ import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data }) {
+function Table({ columns, data, length = 10 }) {
     const props = useTable(
         {
             columns,
             data,
-            initialState: { pageSize: 5 }
+            initialState: { pageSize: length }
 
         },
         useGlobalFilter,
@@ -39,7 +39,7 @@ function Table({ columns, data }) {
     return (
         <>
             <div className="row">
-                <div className="col-md-2">
+                <div className="col-md-3">
                     <span className="col-md-3 position-relative float-end">
                         <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i>
                     </span>
@@ -51,7 +51,7 @@ function Table({ columns, data }) {
                         ))}
                     </select>
                 </div>
-                <div className="col-md-4 offset-md-6">
+                <div className="col-md-4 offset-md-5">
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: '18px', top: '12px', fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>

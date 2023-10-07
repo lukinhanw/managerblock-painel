@@ -25,6 +25,7 @@ import Perfil from './Page/Perfil/Perfil';
 import useAuth from "./Auth/hook_useAuth";
 import Api from './Api';
 import { useEffect, useState } from 'react';
+import { Modal } from 'react-bootstrap';
 
 function AuthenticatedRoutes() {
 	return (
@@ -52,6 +53,7 @@ function App() {
 	const [info, setInfo] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [menuOpen, setMenuOpen] = useState(true);
+	const [showModal, setShowModal] = useState(false);
 
 	let token = null;
 	const userToken = localStorage.getItem("user_token");
@@ -66,8 +68,9 @@ function App() {
 			return response;
 		},
 		function (error) {
-			if (error.response.status === 400) {
-				signout();
+			if (error.response.status === 400 || error.response.status === 500) {
+				setShowModal(true);
+				signout()
 			}
 			return Promise.reject(error);
 		}
@@ -124,6 +127,19 @@ function App() {
 					</Routes>
 				)}
 			</Router>
+			<Modal centered show={showModal} onHide={() => setShowModal(false)}>
+				<Modal.Header closeButton>
+					<Modal.Title>Confirmação</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>Sessão encerrada, faça o login novamente.</p>
+				</Modal.Body>
+				<Modal.Footer>
+					<button className="btn btn-secondary" onClick={() => { setShowModal(false) }} >
+						Fechar
+					</button>
+				</Modal.Footer>
+			</Modal>
 		</HelmetProvider>
 	);
 }

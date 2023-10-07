@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const Api = axios.create({
-    baseURL: 'https://api.bigbox.guru'
+    baseURL: process.env.REACT_APP_API
 });
 
 export default Api

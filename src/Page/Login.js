@@ -10,7 +10,7 @@ const Login = () => {
     const [status, setStatus] = useState({ success: false, message: '' });
     const { signin } = useAuth();
     const navigate = useNavigate();
-    
+
     const [info, setInfo] = useState(null);
     useEffect(() => {
         Api.get(`info-public`).then((response) => {
@@ -31,7 +31,7 @@ const Login = () => {
             document.body.style.backgroundRepeat = "no-repeat";
             document.body.style.backgroundSize = "auto";
         }
-    
+
         // Removendo os estilos quando o componente é desmontado
         return () => {
             document.body.style.backgroundImage = "";
@@ -39,17 +39,17 @@ const Login = () => {
             document.body.style.backgroundSize = "";
         }
     }, [info]);
-    
+
 
     const onSubmit = async (dados) => {
         try {
             const token = uuidv4();
-                
-            const response = await Api.put('login', JSON.stringify({...dados, token}), {
+
+            const response = await Api.put('login', JSON.stringify({ ...dados, token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
             console.log(response);
-    
+
             setStatus({
                 success: true,
                 message: "Credenciais aceitas, fazendo login..."
@@ -57,7 +57,7 @@ const Login = () => {
 
             signin({ nome: response.data[0].nome, idUsuario: response.data[0].id, token: token }, true);
             navigate("/");
-            
+
         } catch (error) {
             if (error.response) {
                 setStatus({
@@ -72,7 +72,7 @@ const Login = () => {
                 console.log('Error', error.message);
             }
         }
-    };    
+    };
 
     return (
         <div>
@@ -125,7 +125,7 @@ const Login = () => {
 
             <footer className="footer bg-dark fixed-bottom text-white text-center py-3">
                 <p>
-                    "Nome do painel" &copy; {new Date().getFullYear()} - Todos os direitos reservados.
+                    {info && info.titulo_painel} &copy; {new Date().getFullYear()} - Todos os direitos reservados.
                     <br />
                     Desenvolvido por 8Tech 🧡
                 </p>
