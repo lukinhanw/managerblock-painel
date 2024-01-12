@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
 
-
+ 
 const ListarCodigos = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })

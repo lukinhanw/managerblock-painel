@@ -137,7 +137,7 @@ const NovoCodigo = () => {
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Quantidade de Créditos *
+                                        Quantidade de Créditos * 
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" defaultValue="1" {...register("creditos", { required: true })} type="number" />

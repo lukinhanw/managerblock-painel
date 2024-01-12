@@ -95,7 +95,7 @@ const EditarCodigo = () => {
                                 {status.message}
                             </div>
                         </div>
-                    )}
+                    )} 
 
                     <div className="card">
                         <div className="card-header px-4 py-3 bg-transparent">
