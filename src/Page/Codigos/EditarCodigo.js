@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Api from '../../Api';
-import InputMask from 'react-input-mask';
+// import InputMask from 'react-input-mask';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EditarCodigo = () => {
@@ -146,7 +146,7 @@ const EditarCodigo = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <InputMask mask="+99 99 99999 9999" className="form-control" maskChar=" " {...register("whatsapp")} defaultValue={initialData.whatsapp} />
+                                        <input className="form-control" type='number' {...register("whatsapp")} defaultValue={initialData.whatsapp} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>

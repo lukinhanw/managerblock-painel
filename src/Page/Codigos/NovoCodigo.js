@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import InputMask from 'react-input-mask';
+// import InputMask from 'react-input-mask';
 import Api from "../../Api";
 import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,7 @@ const NovoCodigo = () => {
         register,
         handleSubmit,
         reset,
-        setValue,
+        // setValue,
         formState: { errors }
     } = useForm();
 
@@ -45,7 +45,6 @@ const NovoCodigo = () => {
             })
             setShowModalAdd(true)
             reset()
-            setValue("whatsapp", "");
 
         } catch (error) {
             if (error.response) {
@@ -132,7 +131,7 @@ const NovoCodigo = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <InputMask mask="+99 99 99999 9999" className="form-control" maskChar=" " {...register("whatsapp")} />
+                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>
@@ -141,7 +140,7 @@ const NovoCodigo = () => {
                                         Quantidade de Créditos *
                                     </label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" {...register("creditos", { required: true })} type="number" />
+                                        <input className="form-control" defaultValue="1" {...register("creditos", { required: true })} type="number" />
                                         {errors.creditos && <small>Quantidade de créditos é obrigatória.</small>}
                                     </div>
                                 </div>
