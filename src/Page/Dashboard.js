@@ -53,13 +53,21 @@ const Dashboard = () => {
         async function fetchData() {
             try {
                 const response = await Api.get(`listar-codigos-vencendo/${idUsuario}`);
-                setData(response.data);
+                const sortedData = response.data.sort((a, b) => {
+                    // Convertendo as strings de data para objetos Date
+                    const dateA = new Date(a.data_validade);
+                    const dateB = new Date(b.data_validade);
+    
+                    // Comparando as datas
+                    return dateA - dateB;
+                });
+                setData(sortedData);
             } catch (error) {
                 console.error(error);
             }
         }
         fetchData();
-    }, [status, idUsuario]);
+    }, [status, idUsuario]);    
 
     const columns = React.useMemo(
         () => [
@@ -111,7 +119,7 @@ const Dashboard = () => {
                                 } else {
                                     formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                                 }
-
+                                formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                             }
 
                             return (
