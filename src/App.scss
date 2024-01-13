@@ -32,9 +32,24 @@ $theme-colors: (
 .btn-danger {
     border-color: lighten(map-get($theme-colors, danger), 10%) !important;
 }
+
 .btn-dark {
     border-color: lighten(map-get($theme-colors, dark), 10%) !important;
 }
 
+.react-datepicker-wrapper {
+    width: 100% !important;
+}
+
+.fs-7 {
+    font-size: 0.8rem !important;
+}
+
+.text-max-15 {
+    max-width: 25ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 @import "~bootstrap/scss/bootstrap";

@@ -100,46 +100,27 @@ const ListarRevendedores = () => {
                 id: "id",
                 columns: [
                     {
-                        Header: "#",
-                        accessor: (row) => (
-                            <Link to={`/editar-revendedor/${row.id}`}>
-                                {row.id ?? "-"}
-                            </Link>
-                        ),
-                    },
-                    {
                         Header: "Nome Completo",
                         accessor: (row) => row.nome || "-",
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-revendedor/${original.id}`} className="d-flex align-items-center gap-3">
-                                {original.status === 0 ?
-                                    <span className="lable-table bg-success-subtle text-success rounded border border-success-subtle font-text2 fw-bold">
-                                        Ativo
-                                    </span>
-                                    :
-                                    <span className="lable-table bg-danger-subtle text-danger rounded border border-danger-subtle font-text2 fw-bold">
-                                        Bloqueado
-                                    </span>
-                                }
-                                <span>{value}</span>
+                            <Link to={`/editar-revendedor/${original.id}`} className="d-flex flex-column align-items-start">
+                                <span className="font-weight-bold text-white">{original.nome}</span>
+
+                                <div className="d-flex align-items-center">
+                                    {original.status === 0 ?
+                                        <span className="lable-table bg-success-subtle text-success rounded border border-success-subtle font-text2 fw-bold">
+                                            Ativo
+                                        </span>
+                                        :
+                                        <span className="lable-table bg-danger-subtle text-danger rounded border border-danger-subtle font-text2 fw-bold">
+                                            Bloqueado
+                                        </span>
+                                    }
+                                    <div className='ms-1 lable-table bg-warning-subtle text-warning rounded border border-warning-subtle font-text2 fw-bold'>Créditos: {original.creditos}</div>
+                                </div>
                             </Link>
-                        ),
-                    },
-                    {
-                        id: "creditos",
-                        Header: () => (
-                            <div style={{ textAlign: "center" }}>Créditos</div>
-                        ),
-                        accessor: (row) => row.creditos || "-",
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <div className="d-flex justify-content-center">
-                                <Link
-                                    className="btn btn-outline-warning"
-                                    to={`/editar-revendedor/${original.id}`}
-                                >
-                                    {value || "-"}
-                                </Link>
-                            </div>
+
+
                         ),
                     },
                     {
@@ -154,31 +135,19 @@ const ListarRevendedores = () => {
                     {
                         id: "usuario",
                         Header: () => (
-                            <div style={{ textAlign: "center" }}>Usuário do Painel</div>
+                            <div style={{ textAlign: "center" }}>Usuário</div>
                         ),
                         accessor: (row) => row.usuario_painel || "-",
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <div className="d-flex justify-content-center">
+                            <div className="d-flex justify-content-center flex-column align-items-center">
                                 <Link to={`/editar-revendedor/${original.id}`}>
                                     {value || "-"}
                                 </Link>
-                            </div>
-                        ),
-                    },
-                    {
-                        id: "qtd_codigos",
-                        Header: () => (
-                            <div style={{ textAlign: "center" }}>Qtd de Códigos</div>
-                        ),
-                        accessor: (row) => row.quantidade_codigos || "0",
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <div className="d-flex justify-content-center">
-                                <Link
-                                    className="btn btn-outline-success"
-                                    to={`/editar-revendedor/${original.id}`}
-                                >
-                                    {value || "-"}
-                                </Link>
+                                <div className="d-flex align-items-center">
+                                    <span className="lable-table bg-info-subtle text-info rounded border border-info-subtle font-text2 fw-bold">
+                                        Clientes: {original.quantidade_codigos}
+                                    </span>
+                                </div>
                             </div>
                         ),
                     },
@@ -210,13 +179,13 @@ const ListarRevendedores = () => {
                         accessor: (row) => row.data_vencimento || "-",
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
-                                <div className="d-flex justify-content-between">
-                                    <Link className="fs-4" to={`/editar-revendedor/${original.id}`}>
+                                <div className="d-flex justify-content-center align-items-center">
+                                    <Link className="fs-4 me-2" to={`/editar-revendedor/${original.id}`}>
                                         <span className="material-symbols-outlined">
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className="fs-4"
+                                    <Link className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             setShowModalCreditos(true);
@@ -226,7 +195,7 @@ const ListarRevendedores = () => {
                                             attach_money
                                         </span>
                                     </Link>
-                                    <Link className="fs-4"
+                                    <Link className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             original.status === 1 ? setShowModalUnblock(true) : setShowModalBlock(true)
@@ -236,7 +205,7 @@ const ListarRevendedores = () => {
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link className="fs-4"
+                                    <Link className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             setShowModalDelete(true);

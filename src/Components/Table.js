@@ -41,7 +41,7 @@ function Table({ columns, data, length = 10 }) {
             <div className="row">
                 <div className="col-md-3">
                     <span className="col-md-3 position-relative float-end">
-                        <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i>
+                        {/* <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i> */}
                     </span>
                     <select className="form-select exibir_table mb-1 ps-4" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)) }}>
                         {[5, 10, 30, 40, 50].map(pageSize => (
@@ -53,9 +53,9 @@ function Table({ columns, data, length = 10 }) {
                 </div>
                 <div className="col-md-4 offset-md-5">
                     <span className="col-md-3 position-relative">
-                        <i className="bi bi-search position-absolute" style={{ left: '18px', top: '12px', fontSize: '1.1rem', color: '#adb5c9' }}></i>
+                        <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>
-                    <input className="search_table float-end form-control" value={globalFilter || ""} onChange={e => setGlobalFilter(e.target.value)} type="search" placeholder="Pesquisar" aria-label="Search"></input>
+                    <input className="search_table float-end form-control" style={{ paddingLeft: 30 }} value={globalFilter || ""} onChange={e => setGlobalFilter(e.target.value)} type="search" placeholder="Pesquisar" aria-label="Search"></input>
                 </div>
             </div>
             <div className="contact-list-area">
@@ -67,7 +67,7 @@ function Table({ columns, data, length = 10 }) {
                                     <tr {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map((column) => {
                                             return column.hideHeader === false ? null : (
-                                                <th {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
+                                                <th style={{ width: 250}} {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
                                                     <span className="inline-flex items-center">
                                                         {column.render("Header")}
                                                     </span>

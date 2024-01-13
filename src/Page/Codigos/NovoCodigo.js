@@ -32,37 +32,24 @@ const NovoCodigo = () => {
     }, []);
 
     const onSubmit = async (dados) => {
-
         try {
             await Api.post('novo-codigo', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-
-            setModalData({ usuario: dados.codigo, senha: dados.senha_liberacao })
+    
+            setModalData({ usuario: dados.codigo, senha: dados.senha_liberacao });
             setStatus({
                 success: true,
                 message: "Código criado com sucesso."
-            })
-            setShowModalAdd(true)
-            reset()
-
+            });
+            setShowModalAdd(true);
+            reset();
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-
-            } else if (error.request) {
-                // O request foi feito mas não houve resposta
-                console.log(error.request);
-            } else {
-                // Algo aconteceu na preparação do request que disparou um erro
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao criar código:', error);
+            const errorMessage = error.response?.data?.error || "Erro desconhecido ao criar código";
+            setStatus({ success: false, message: errorMessage });
         }
-    };
-
+    };    
 
     return (
         <main className="page-content">

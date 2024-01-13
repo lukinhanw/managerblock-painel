@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Api from '../../Api';
-import InputMask from 'react-input-mask';
 import Select from 'react-select'
 import { useNavigate } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
@@ -64,46 +63,41 @@ const NovoRevendedor = () => {
         register,
         handleSubmit,
         reset,
-        setValue,
         control,
         formState: { errors }
     } = useForm();
 
-
     const onSubmit = async (dados) => {
-
-        let dadosEnviar = { ...dados };
-        dadosEnviar.id_dono = dados.id_dono.value;
-
         try {
+            // Prepara os dados para envio
+            const dadosEnviar = {
+                ...dados,
+                id_dono: dados.id_dono.value
+            };
+    
+            // Executa a requisição POST
             await Api.post('novo-revendedor', JSON.stringify(dadosEnviar), {
                 headers: { 'Content-Type': 'application/json' }
             });
-
-            setModalData({ usuario: dados.usuario_painel, senha: dados.senha_painel })
-            setShowModalAdd(true)
+    
+            // Atualiza o modal e o status
+            setModalData({ usuario: dados.usuario_painel, senha: dados.senha_painel });
+            setShowModalAdd(true);
             setStatus({
                 success: true,
                 message: "Revendedor criado com sucesso."
             });
-            reset()
-            setValue("whatsapp", "");
-
+            reset();
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-            } else if (error.request) {
-                // O request foi feito mas não houve resposta
-                console.log(error.request);
-            } else {
-                // Algo aconteceu na preparação do request que disparou um erro
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao criar revendedor:', error);
+            // Define uma mensagem de erro baseada na resposta ou no erro genérico
+            const errorMessage = error.response?.data?.error || error.request || 'Erro desconhecido ao criar revendedor';
+            setStatus({
+                success: false,
+                message: `Ocorreu um erro: ${errorMessage}`
+            });
         }
-    };
+    };    
 
     const [dataRevendedores, setDataRevendedores] = useState([]);
     useEffect(() => {
@@ -123,7 +117,6 @@ const NovoRevendedor = () => {
         navigate("/")
         return null
     }
-
 
     return (
         <main className="page-content">
@@ -172,7 +165,7 @@ const NovoRevendedor = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <InputMask mask="+99 99 99999 9999" className="form-control" maskChar=" " {...register("whatsapp")} />
+                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>

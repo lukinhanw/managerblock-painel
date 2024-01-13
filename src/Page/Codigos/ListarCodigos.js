@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
 
- 
+
 const ListarCodigos = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })
@@ -22,7 +22,7 @@ const ListarCodigos = () => {
     const renovarCodigo = async (id, token) => {
         try {
 
-            const response = await Api.put(`renovar-codigo/${id}`, JSON.stringify({token}), {
+            const response = await Api.put(`renovar-codigo/${id}`, JSON.stringify({ token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
@@ -108,47 +108,26 @@ const ListarCodigos = () => {
                 id: 'id',
                 columns: [
                     {
-                        Header: "#",
-                        accessor: row => <Link to={`/editar-codigo/${row.id}`}>{row.id ?? '-'}</Link>
-                    },
-                    {
-                        Header: "Nome Completo",
+                        Header: "Código",
                         accessor: row => row.nome || '-',
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`} className="d-flex align-items-center gap-3">
-                                {original.status === 0 ?
-                                    <span className="lable-table bg-success-subtle text-success rounded border border-success-subtle font-text2 fw-bold">
-                                        Ativo
-                                    </span>
-                                    :
-                                    <span className="lable-table bg-danger-subtle text-danger rounded border border-danger-subtle font-text2 fw-bold">
-                                        Bloqueado
-                                    </span>
-                                }
-                                {
-                                    original.tipo === 'teste' ?
-                                        <span className="lable-table bg-warning-subtle text-warning rounded border border-warning-subtle font-text2 fw-bold">
-                                            Teste
-                                        </span> : ''
-                                }
+                            <Link to={`/editar-codigo/${original.id}`} className="d-flex flex-column align-items-start">
+                                <span className="font-weight-bold text-white">{original.codigo}</span>
 
-
-                                <span>{value}</span>
+                                <div className="d-flex align-items-center me-1">
+                                    {original.status === 0 ?
+                                        <span className="badge bg-success">
+                                            Ativo
+                                        </span>
+                                        :
+                                        <span className="badge bg-danger">
+                                            Bloqueado
+                                        </span>
+                                    }
+                                    <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
+                                    <div className='badge bg-secondary ms-1'><Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i class="bi bi-whatsapp"></i> {original.whatsapp || '-'}</Link></div>
+                                </div>
                             </Link>
-                        ),
-                    },
-                    {
-                        Header: "Código",
-                        accessor: row => row.codigo || '-',
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
-                        ),
-                    },
-                    {
-                        Header: "WhatsApp",
-                        accessor: row => row.whatsapp || '-',
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`http://wa.me/${original.id}`} target='_blank'>{value || '-'}</Link>
                         ),
                     },
                     {
@@ -156,13 +135,14 @@ const ListarCodigos = () => {
                         Header: () => (
                             <div
                                 style={{
-                                    textAlign: "center"
+                                    textAlign: "center",
                                 }}
                             >Validade</div>
                         ),
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             let formattedDate = value;
+                            let formattedDateHora = '';
                             let dateClass = '';
 
                             if (value !== '-') {
@@ -175,29 +155,25 @@ const ListarCodigos = () => {
                                     dateClass = "text-danger";
                                 } else if (daysDifference <= 3) {
                                     dateClass = "text-danger";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
+                                    formattedDateHora = format(dateObj, 'HH:ii');
                                 } else if (daysDifference <= 7) {
                                     dateClass = "text-warning";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
+                                    formattedDateHora = format(dateObj, 'HH:ii');
                                 } else {
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
+                                    formattedDateHora = format(dateObj, 'HH:ii');
                                 }
 
                             }
 
                             return (
-                                <div className={`d-flex justify-content-center`}>
-                                    <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
+                                <div className={`d-flex justify-content-center text-center align-items-center`}>
+                                    <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
                                 </div>
                             )
                         }
-                    },
-                    {
-                        Header: "Servidor",
-                        accessor: row => row.servidor || '-',
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
-                        ),
                     },
                     {
                         Header: "Usuário",
@@ -210,7 +186,11 @@ const ListarCodigos = () => {
                         Header: "Dono",
                         accessor: row => row.nome_dono || '-',
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
+                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}
+                                <div className="d-flex align-items-center lable-table bg-info-subtle text-info rounded border border-info-subtle font-text2 fw-bold">
+                                    {original.servidor}
+                                </div>
+                            </Link>
                         ),
                     },
                     {
@@ -225,18 +205,18 @@ const ListarCodigos = () => {
                         accessor: row => row.data_vencimento || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
-                                <div className="d-flex justify-content-between">
-                                    <Link className='fs-4' to={`/editar-codigo/${original.id}`}>
+                                <div className="d-flex justify-content-center align-items-center">
+                                    <Link className='fs-4 me-3' to={`/editar-codigo/${original.id}`}>
                                         <span className="material-symbols-outlined">
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
                                     </Link>
-                                    <Link className="fs-4"
+                                    <Link className="fs-4 me-3"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             original.status === 1 ? setShowModalUnblock(true) : setShowModalBlock(true)
@@ -246,7 +226,7 @@ const ListarCodigos = () => {
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link className='fs-4' onClick={() => { setModalData({ nome: original.codigo, id: original.id }); setShowModalDelete(true); }}>
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id }); setShowModalDelete(true); }}>
                                         <span className="material-symbols-outlined">
                                             delete
                                         </span>

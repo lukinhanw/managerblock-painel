@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Api from '../../Api';
 import { useNavigate, useParams } from 'react-router-dom';
-import InputMask from 'react-input-mask';
 import Select from 'react-select'
 
 const EditarRevendedor = () => {
@@ -45,8 +44,8 @@ const EditarRevendedor = () => {
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
     const [initialData, setInitialData] = useState(null);
     const navigate = useNavigate();
-    
-    
+
+
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
@@ -106,52 +105,45 @@ const EditarRevendedor = () => {
         }
     }, [initialData, setValue]);  // Apenas para definir o valor
 
-
-
-
     const onSubmit = async (dados) => {
         try {
+            // Prepara os dados para envio
+            const dadosEnviar = {
+                ...dados,
+                id_dono: dados.id_dono.value
+            };
 
-            let dadosEnviar = { ...dados };
-            dadosEnviar.id_dono = dados.id_dono.value;
-
-            console.log(dadosEnviar);
-
+            // Executa a requisição PUT
             await Api.put(`editar-revendedor/${id}`, JSON.stringify(dadosEnviar), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
+            // Atualiza o status em caso de sucesso
             setStatus({
                 success: true,
                 message: "Revendedor editado com sucesso."
             });
-
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-            } else if (error.request) {
-                // O request foi feito mas não houve resposta
-                console.log(error.request);
-            } else {
-                // Algo aconteceu na preparação do request que disparou um erro
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao editar revendedor:', error);
+            // Define uma mensagem de erro baseada na resposta ou no erro genérico
+            const errorMessage = error.response?.data?.error || error.request || 'Erro desconhecido ao editar revendedor';
+            setStatus({
+                success: false,
+                message: `Ocorreu um erro: ${errorMessage}`
+            });
         }
     };
 
     if (!initialData) {
         return <div>Carregando...</div>;
     }
-    
+
     //Redireciona caso nao seja admin
     if (dadosInfoUser && dadosInfoUser.id_dono !== 0) {
         navigate("/")
         return null
     }
-    
+
     return (
 
         <main className="page-content">
@@ -201,8 +193,8 @@ const EditarRevendedor = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <InputMask mask="+99 99 99999 9999" className="form-control" maskChar=" " defaultValue={initialData.whatsapp} {...register("whatsapp")} />
-                                        {errors.whatsapp && <small>Email é obrigatório.</small>}
+                                        <input className="form-control" type='number' {...register("whatsapp")} defaultValue={initialData.whatsapp} />
+                                        {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>
 

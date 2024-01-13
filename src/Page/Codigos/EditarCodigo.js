@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import Api from '../../Api';
-// import InputMask from 'react-input-mask';
 import { useNavigate, useParams } from 'react-router-dom';
+import ReactDatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import ptBR from 'date-fns/locale/pt-BR';
+
+registerLocale('pt-BR', ptBR);
 
 const EditarCodigo = () => {
 
     const { id } = useParams();
     const [status, setStatus] = useState({ success: false, message: '' });
     const navigate = useNavigate();
+    const [initialData, setInitialData] = useState(null);
+    const [dadosInfoUser, setDadosInfoUser] = useState(null);
+    const { idUsuario } = JSON.parse(localStorage.getItem("user_token"))
 
     const { token } = JSON.parse(localStorage.getItem("user_token"))
 
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors }
     } = useForm();
 
-    const [initialData, setInitialData] = useState(null);
-
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 const response = await Api.post(`codigo/${id}`, JSON.stringify({ 'token': token }), {
@@ -32,8 +40,12 @@ const EditarCodigo = () => {
             }
         };
 
+        Api.get(`info/${idUsuario}`).then((response) => {
+            setDadosInfoUser(response.data);
+        });
+
         fetchData();
-    }, [id, token, navigate]);
+    }, [id, token, navigate, idUsuario]);
 
     const [dadosInfoServidores, setDadosInfoServidores] = useState(null);
     useEffect(() => {
@@ -43,40 +55,22 @@ const EditarCodigo = () => {
 
     }, []);
 
-
     const onSubmit = async (dados) => {
         try {
             await Api.put(`editar-codigo/${id}`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-
-            setStatus({
-                success: true,
-                message: "Código editado com sucesso."
-            });
-
+            setStatus({ success: true, message: "Código editado com sucesso." });
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-
-
-            } else if (error.request) {
-                // O request foi feito mas não houve resposta
-                console.log(error.request);
-            } else {
-                // Algo aconteceu na preparação do request que disparou um erro
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao editar código:', error);
+            const errorMessage = error.response?.data?.error || error.message || "Erro desconhecido";
+            setStatus({ success: false, message: `Ocorreu um erro: ${errorMessage}` });
         }
     };
 
     if (!initialData) {
         return <div>Carregando...</div>;  // Ou algum componente de carregamento
     }
-
 
     return (
 
@@ -95,7 +89,7 @@ const EditarCodigo = () => {
                                 {status.message}
                             </div>
                         </div>
-                    )} 
+                    )}
 
                     <div className="card">
                         <div className="card-header px-4 py-3 bg-transparent">
@@ -132,6 +126,35 @@ const EditarCodigo = () => {
                                         {errors.senha_liberacao && <small>Senha de liberação é obrigatório.</small>}
                                     </div>
                                 </div>
+
+                                {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
+                                    <div className="row mb-3">
+                                        <label className="col-sm-4 col-form-label">
+                                            Data de validade
+                                        </label>
+                                        <div className="col-sm-8">
+                                            <Controller
+                                                name="data_validade"
+                                                control={control}
+                                                defaultValue={initialData ? new Date(initialData.data_validade) : new Date()}
+                                                render={({ field }) => (
+                                                    <ReactDatePicker
+                                                        className="form-control"
+                                                        dateFormat="dd/MM/yyyy HH:mm"
+                                                        showTimeSelect
+                                                        timeFormat="HH:mm"
+                                                        timeIntervals={15}
+                                                        onChange={(date) => field.onChange(date)}
+                                                        selected={field.value}
+                                                        locale="pt-BR"
+                                                    />
+                                                )}
+                                            />
+                                            {errors.data_validade && <small>Data de validade é obrigatório.</small>}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         E-mail

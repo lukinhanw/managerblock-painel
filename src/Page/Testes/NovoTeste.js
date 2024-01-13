@@ -34,27 +34,19 @@ const NovoTeste = () => {
             await Api.post('novo-teste', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-
             setStatus({
                 success: true,
                 message: "Teste criado com sucesso."
             });
-
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-            } else if (error.request) {
-                // O request foi feito mas não houve resposta
-                console.log(error.request);
-            } else {
-                // Algo aconteceu na preparação do request que disparou um erro
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao criar teste:', error);
+            const errorMessage = error.response?.data?.error || error.request || 'Erro desconhecido ao criar teste';
+            setStatus({
+                success: false,
+                message: `Ocorreu um erro: ${errorMessage}`
+            });
         }
-    };
+    };    
 
     return (
         <main className="page-content">
@@ -105,7 +97,7 @@ const NovoTeste = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" {...register("whatsapp")} />
+                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>

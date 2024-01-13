@@ -42,29 +42,20 @@ const Ajustes = () => {
 
     const onSubmit = async (dados) => {
         try {
-
             await Api.put(`ajustes-painel`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-
+    
             setStatus({
                 success: true,
                 message: "Ajustes do Painel editado com sucesso."
             });
-
         } catch (error) {
-            if (error.response) {
-                setStatus({
-                    success: false,
-                    message: `Ocorreu um erro: ${error.response.data.error}`
-                });
-            } else if (error.request) {
-                console.log(error.request);
-            } else {
-                console.log('Error', error.message);
-            }
+            console.error('Erro ao editar ajustes do painel:', error);
+            const errorMessage = error.response?.data?.error || "Erro desconhecido ao editar ajustes do painel";
+            setStatus({ success: false, message: errorMessage });
         }
-    };
+    };    
 
     if (!initialData) {
         return <div>Carregando...</div>;  // Ou algum componente de carregamento
