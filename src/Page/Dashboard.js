@@ -119,7 +119,7 @@ const Dashboard = () => {
                                 } else {
                                     formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                                 }
-                                formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                // formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                             }
 
                             return (
