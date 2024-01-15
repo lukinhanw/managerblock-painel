@@ -2,7 +2,7 @@ import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data, length = 10 }) {
+function Table({ columns, data, length = 10, showFilter = true, showMenu = true }) {
     const props = useTable(
         {
             columns,
@@ -39,7 +39,7 @@ function Table({ columns, data, length = 10 }) {
     return (
         <>
             <div className="row">
-                <div className="col-md-3">
+                <div className={`col-md-3 ${showMenu ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative float-end">
                         {/* <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i> */}
                     </span>
@@ -51,7 +51,7 @@ function Table({ columns, data, length = 10 }) {
                         ))}
                     </select>
                 </div>
-                <div className="col-md-4 offset-md-5">
+                <div className={`col-md-4 offset-md-5 ${showFilter ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>
@@ -59,7 +59,7 @@ function Table({ columns, data, length = 10 }) {
                 </div>
             </div>
             <div className="contact-list-area">
-                <div className="container-fluid mb-5">
+                <div className="container-fluid mb-3">
                     <div className="table-responsive w-100">
                         <table {...getTableProps()} className="table align-middle mb-1 mt-4 text-nowrap">
                             <thead>
@@ -98,11 +98,12 @@ function Table({ columns, data, length = 10 }) {
                         </table>
                     </div>
                 </div>
-                <div className='row mb-2'>
-                    <p>Exibindo {pageSize < rows.length ? pageSize : rows.length} de {rows.length} registros</p>
-                    <div className='col-md-6 text-end'>Página <strong>{pageIndex + 1} de {pageOptions.length}</strong></div>
 
+                <div className='row mb-2'>
+                    <div className='col-md-6 text-start'>Exibindo {pageSize < rows.length ? pageSize : rows.length} de {rows.length} registros</div>
+                    <div className='col-md-6 text-end'>Página <strong>{pageIndex + 1} de {pageOptions.length}</strong></div>
                 </div>
+
                 <nav className='pagination_table'>
                     <ul className="pagination justify-content-end custom-style">
                         <li className="page-item">

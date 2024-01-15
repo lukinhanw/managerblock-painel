@@ -11,7 +11,7 @@ const Sidebar = () => {
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     const [menuOpen, setMenuOpen] = useState({});  // Adicionado aqui
 
-    
+
     const { idUsuario } = JSON.parse(localStorage.getItem("user_token"))
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
@@ -45,8 +45,8 @@ const Sidebar = () => {
 
         const sidebar = document.querySelector('.sidebar-wrapper');
         const sidebarClose = document.querySelector('.sidebar-close');
-    
-        sidebarClose.addEventListener('click', function() {
+
+        sidebarClose.addEventListener('click', function () {
             sidebar.classList.toggle('active');
         });
     }
@@ -94,10 +94,10 @@ const Sidebar = () => {
                                             </li>
 
                                             <li className="menu-label mt-3 mb-2">
-                                                Códigos e Revendedores
+                                                Usuários e Revendedores
                                             </li>
 
-                                            <li>
+                                            <li className={data.exibir_codigos === '0' ? 'd-none' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("codigo")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -128,6 +128,43 @@ const Sidebar = () => {
                                                                     subdirectory_arrow_right
                                                                 </span>
                                                                 Listar Códigos
+                                                            </Link>
+                                                        </li>
+                                                    </ul>
+                                                )}
+                                            </li>
+
+                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}> 
+                                                <Link to="#" onClick={() => toggleMenu("usuario")}>
+                                                    <div className="parent-icon">
+                                                        <span class="material-symbols-outlined">
+                                                            person
+                                                        </span>
+                                                    </div>
+                                                    <div className="menu-title d-flex justify-content-between" >
+                                                        Usuários
+                                                        <span className="arrow-icon material-symbols-outlined">
+                                                            {menuOpen.usuario ? 'expand_less' : 'expand_more'}
+                                                        </span>
+                                                    </div>
+                                                </Link>
+
+                                                {menuOpen.usuario && (
+                                                    <ul className="ms-3">
+                                                        <li>
+                                                            <Link to="/novo-usuario">
+                                                                <span className="material-symbols-outlined">
+                                                                    subdirectory_arrow_right
+                                                                </span>
+                                                                Novo Usuário
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link to="/listar-usuarios">
+                                                                <span className="material-symbols-outlined">
+                                                                    subdirectory_arrow_right
+                                                                </span>
+                                                                Listar Usuários
                                                             </Link>
                                                         </li>
                                                     </ul>

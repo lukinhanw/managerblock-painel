@@ -7,7 +7,7 @@ import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
 
 
-const ListarCodigos = () => {
+const ListarUsuarios = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
@@ -19,10 +19,10 @@ const ListarCodigos = () => {
 
     const [modalData, setModalData] = useState({});
 
-    const renovarCodigo = async (id, token) => {
+    const renovarUsuario = async (id, token) => {
         try {
 
-            const response = await Api.put(`renovar-codigo/${id}`, JSON.stringify({ token }), {
+            const response = await Api.put(`renovar-usuario/${id}`, JSON.stringify({ token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
@@ -41,9 +41,9 @@ const ListarCodigos = () => {
         }
     };
 
-    const deletarCodigo = async (id) => {
+    const deletarUsuario = async (id) => {
         try {
-            const response = await Api.delete(`deletar-codigo/${id}`, {
+            const response = await Api.delete(`deletar-usuario/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setShowModalDelete(false);
@@ -56,14 +56,14 @@ const ListarCodigos = () => {
             // Mostra uma mensagem de erro genérica ao usuário
             setStatus({
                 success: false,
-                message: "Ocorreu um erro ao apagar o código. Tente novamente mais tarde.",
+                message: "Ocorreu um erro ao apagar o usuário. Tente novamente mais tarde.",
             });
         }
     };
 
-    const bloquearCodigo = async (id) => {
+    const bloquearUsuario = async (id) => {
         try {
-            const response = await Api.put(`bloquear-codigo/${id}`, JSON.stringify({ token: token }), {
+            const response = await Api.put(`bloquear-usuario/${id}`, JSON.stringify({ token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
@@ -80,10 +80,10 @@ const ListarCodigos = () => {
         }
     };
 
-    const desbloquearCodigo = async (id) => {
+    const desbloquearUsuario = async (id) => {
         try {
 
-            const response = await Api.put(`desbloquear-codigo/${id}`, JSON.stringify({ token: token }), {
+            const response = await Api.put(`desbloquear-usuario/${id}`, JSON.stringify({ token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
             setShowModalUnblock(false);
@@ -108,11 +108,11 @@ const ListarCodigos = () => {
                 id: 'id',
                 columns: [
                     {
-                        Header: "Código",
-                        accessor: row => `${row.nome || '-'} ${row.codigo || ''} ${row.whatsapp || ''}`,
+                        Header: "Usuário",
+                        accessor: row => `${row.nome || '-'} ${row.usuario || ''} ${row.whatsapp || ''}`,
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`} className="d-flex flex-column align-items-start">
-                                <span className="font-weight-bold text-white">{original.codigo}</span>
+                            <Link to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
+                                <span className="font-weight-bold text-white">{original.usuario}</span>
 
                                 <div className="d-flex align-items-center me-1">
                                     {original.status === 0 ?
@@ -170,23 +170,16 @@ const ListarCodigos = () => {
 
                             return (
                                 <div className={`d-flex justify-content-center text-center align-items-center`}>
-                                    <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
+                                    <Link className={dateClass} to={`/editar-usuario/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
                                 </div>
                             )
                         }
                     },
                     {
-                        Header: "Usuário",
-                        accessor: row => row.usuario_servidor || '-',
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
-                        ),
-                    },
-                    {
                         Header: "Dono",
                         accessor: row => row.nome_dono || '-',
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}
+                            <Link to={`/editar-usuario/${original.id}`}>{value || '-'}
                                 <div className="d-flex align-items-center lable-table bg-info-subtle text-info rounded border border-info-subtle font-text2 fw-bold">
                                     {original.servidor}
                                 </div>
@@ -206,12 +199,12 @@ const ListarCodigos = () => {
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Link className='fs-4 me-3' to={`/editar-codigo/${original.id}`}>
+                                    <Link className='fs-4 me-3' to={`/editar-usuario/${original.id}`}>
                                         <span className="material-symbols-outlined">
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.usuario, id: original.id, token: token }); setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -226,7 +219,7 @@ const ListarCodigos = () => {
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id }); setShowModalDelete(true); }}>
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.usuario, id: original.id }); setShowModalDelete(true); }}>
                                         <span className="material-symbols-outlined">
                                             delete
                                         </span>
@@ -246,7 +239,7 @@ const ListarCodigos = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await Api.get(`listar-codigos/${idUsuario}`);
+                const response = await Api.get(`listar-usuarios/${idUsuario}`);
                 setData(response.data);
             } catch (error) {
                 console.error(error);
@@ -258,13 +251,13 @@ const ListarCodigos = () => {
     return (
         <>
             <main className="page-content">
-                <h6 className="text-uppercase">Lista de Códigos</h6>
+                <h6 className="text-uppercase">Lista de Usuários</h6>
                 <hr />
                 <div className='row'>
                     <div className="col-lg-12 mx-auto">
                         <div className="card">
                             <div className="card-header px-4 py-3 bg-transparent">
-                                <h5 className="mb-0">Todos os códigos</h5>
+                                <h5 className="mb-0">Todos os usuários</h5>
                             </div>
                             <div className="card-body p-4">
                                 {status.message && (
@@ -294,7 +287,7 @@ const ListarCodigos = () => {
                     Tem certeza que deseja deletar o registro de: <b>{modalData.nome}</b> ?
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className="btn btn-primary" onClick={() => { deletarCodigo(modalData.id) }} >
+                    <button className="btn btn-primary" onClick={() => { deletarUsuario(modalData.id) }} >
                         Confirmar
                     </button>
                     <button className="btn btn-secondary" onClick={() => setShowModalDelete(false)} >
@@ -306,13 +299,13 @@ const ListarCodigos = () => {
             {/* Modal de bloqueio */}
             <Modal centered show={showModalBlock} onHide={() => setShowModalBlock(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Bloquear Revendedor</Modal.Title>
+                    <Modal.Title>Bloquear Usuário</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Você tem certeza que deseja bloquear o revendedor <b>{modalData.nome}</b>?
+                    Você tem certeza que deseja bloquear o usuário <b>{modalData.nome}</b>?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => bloquearCodigo(modalData.id)}>
+                    <Button variant="primary" onClick={() => bloquearUsuario(modalData.id)}>
                         Confirmar
                     </Button>
                     <Button variant="secondary" onClick={() => setShowModalBlock(false)}>
@@ -324,13 +317,13 @@ const ListarCodigos = () => {
             {/* Modal de desbloqueio */}
             <Modal centered show={showModalUnblock} onHide={() => setShowModalUnblock(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Desbloquear Revendedor</Modal.Title>
+                    <Modal.Title>Desbloquear Usuário</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Você tem certeza que deseja desbloquear o revendedor <b>{modalData.nome}</b>?
+                    Você tem certeza que deseja desbloquear o usuário <b>{modalData.nome}</b>?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => desbloquearCodigo(modalData.id)}>
+                    <Button variant="primary" onClick={() => desbloquearUsuario(modalData.id)}>
                         Confirmar
                     </Button>
                     <Button variant="secondary" onClick={() => setShowModalUnblock(false)}>
@@ -348,7 +341,7 @@ const ListarCodigos = () => {
                     Renovar o código <b>{modalData.nome}</b> por mais um mês?
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => renovarCodigo(modalData.id, modalData.token)}>
+                    <Button variant="primary" onClick={() => renovarUsuario(modalData.id, modalData.token)}>
                         Confirmar
                     </Button>
                     <Button variant="secondary" onClick={() => setShowModalRenew(false)}>
@@ -361,4 +354,4 @@ const ListarCodigos = () => {
     );
 }
 
-export default ListarCodigos;
+export default ListarUsuarios;

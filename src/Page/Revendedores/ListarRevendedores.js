@@ -19,7 +19,7 @@ const ListarRevendedores = () => {
 
     const deletarUsuario = async (id) => {
         try {
-            const response = await Api.delete(`deletar-usuario/${id}`, {
+            const response = await Api.delete(`deletar-revendedor/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -40,7 +40,7 @@ const ListarRevendedores = () => {
 
     const bloquearUsuario = async (id) => {
         try {
-            const response = await Api.put(`bloquear-usuario/${id}`, JSON.stringify({ token: token }), {
+            const response = await Api.put(`bloquear-revendedor/${id}`, JSON.stringify({ token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
@@ -59,7 +59,7 @@ const ListarRevendedores = () => {
 
     const desbloquearUsuario = async (id) => {
         try {
-            const response = await Api.put(`desbloquear-usuario/${id}`, JSON.stringify({ token: token }), {
+            const response = await Api.put(`desbloquear-revendedor/${id}`, JSON.stringify({ token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
             setShowModalUnblock(false);

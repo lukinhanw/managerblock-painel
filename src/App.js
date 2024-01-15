@@ -26,6 +26,9 @@ import useAuth from "./Auth/hook_useAuth";
 import Api from './Api';
 import { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import NovoUsuario from './Page/Usuarios/NovoUsuario';
+import EditarUsuario from './Page/Usuarios/EditarUsuario';
+import ListarUsuarios from './Page/Usuarios/ListarUsuarios';
 
 function AuthenticatedRoutes() {
 	return (
@@ -33,17 +36,20 @@ function AuthenticatedRoutes() {
 			<Route path="*" element={<Dashboard />} />
 			<Route path="/novo-codigo" element={<NovoCodigo />} />
 			<Route path="/listar-codigos" element={<ListarCodigos />} />
+			<Route path="/listar-usuarios" element={<ListarUsuarios />} />
 			<Route path="/editar-codigo/:id" element={<EditarCodigo />} />
 			<Route path="/novo-revendedor" element={<NovoRevendedor />} />
 			<Route path="/listar-revendedores" element={<ListarRevendedores />} />
 			<Route path="/editar-revendedor/:id" element={<EditarRevendedor />} />
 			<Route path="/editar-codigo/:id" element={<EditarRevendedor />} />
 			<Route path="/novo-teste" element={<NovoTeste />} />
+			<Route path="/novo-usuario" element={<NovoUsuario />} />
 			<Route path="/editar-teste/:id" element={<EditarTeste />} />
+			<Route path="/editar-usuario/:id" element={<EditarUsuario />} />
 			<Route path="/logs-creditos" element={<LogCreditos />} />
 			<Route path="/logs-acoes" element={<LogAcoes />} />
 			<Route path="/ajustes" element={<Ajustes />} />
-			<Route path="/perfil" element={<Perfil />} />
+			<Route path="/perfil" element={<Perfil />} /> 
 		</Routes>
 	);
 }

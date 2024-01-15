@@ -69,7 +69,7 @@ const Dashboard = () => {
         fetchData();
     }, [status, idUsuario]);    
 
-    const columns = React.useMemo(
+    const columnsCodigos = React.useMemo(
         () => [
             {
                 Header: '',
@@ -280,7 +280,7 @@ const Dashboard = () => {
                             </div>
                         </div>
                         <div className="card-body">
-                            <Table columns={columns} data={data} />
+                            <Table columns={columnsCodigos} data={data} showFilter={false} showMenu={false} />
                         </div>
                     </div>
                 </div>

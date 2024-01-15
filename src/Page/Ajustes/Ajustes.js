@@ -41,6 +41,7 @@ const Ajustes = () => {
     }
 
     const onSubmit = async (dados) => {
+        console.log(dados);
         try {
             await Api.put(`ajustes-painel`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
@@ -120,6 +121,38 @@ const Ajustes = () => {
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("background", { required: true })} defaultValue={initialData.background} />
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Exibir Usuários
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" {...register("exibir_usuarios")} value="1" defaultChecked={initialData.exibir_usuarios === '1'} />
+                                            <label className="form-check-label">Sim</label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" {...register("exibir_usuarios")} value="0" defaultChecked={initialData.exibir_usuarios === '0'} />
+                                            <label className="form-check-label">Não</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Exibir Códigos
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" {...register("exibir_codigos")} value="1" defaultChecked={initialData.exibir_codigos === '1'} />
+                                            <label className="form-check-label">Sim</label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input className="form-check-input" type="radio" {...register("exibir_codigos")} value="0" defaultChecked={initialData.exibir_codigos === '0'} />
+                                            <label className="form-check-label">Não</label>
+                                        </div>
                                     </div>
                                 </div>
 
