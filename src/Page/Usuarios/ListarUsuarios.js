@@ -125,7 +125,7 @@ const ListarUsuarios = () => {
                                         </span>
                                     }
                                     <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
-                                    <div className='badge bg-secondary ms-1'><Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i class="bi bi-whatsapp"></i> {original.whatsapp || '-'}</Link></div>
+                                    <div className='badge bg-secondary ms-1'><Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i> {original.whatsapp || '-'}</Link></div>
                                 </div>
                             </Link>
                         ),

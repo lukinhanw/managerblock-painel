@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Api from '../Api';
 import { Link } from 'react-router-dom';
 import Table from '../Components/Table';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { Button, Modal } from 'react-bootstrap';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 const Dashboard = () => {
+    // Registrando os componentes necessários do Chart.js
+    ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+    const [chartData, setChartData] = useState({ labels: [], datasets: [] });
 
     const [status, setStatus] = useState({ success: false, message: '' })
     const [dadosAjustes, setDadosAjustes] = useState(null);
@@ -57,7 +63,7 @@ const Dashboard = () => {
                     // Convertendo as strings de data para objetos Date
                     const dateA = new Date(a.data_validade);
                     const dateB = new Date(b.data_validade);
-    
+
                     // Comparando as datas
                     return dateA - dateB;
                 });
@@ -67,7 +73,7 @@ const Dashboard = () => {
             }
         }
         fetchData();
-    }, [status, idUsuario]);    
+    }, [status, idUsuario]);
 
     const columnsCodigos = React.useMemo(
         () => [
@@ -171,6 +177,66 @@ const Dashboard = () => {
         [token]
     );
 
+    const getUsuariosNovos = useCallback(async () => {
+        try {
+            const response = await Api.get(`/listar-usuarios-intervalo/${idUsuario}`);
+            let data = response.data;
+    
+            let intervalos = {
+                hoje: 0,
+                ontem: 0,
+                ultima_semana: 0,
+                este_mes: 0,
+                mes_passado: 0
+            };
+    
+            // Processamento dos dados
+            data.forEach(item => {
+                if (intervalos.hasOwnProperty(item.intervalo)) {
+                    intervalos[item.intervalo] = item.quantidade;
+                }
+            });
+    
+            // Mapeando os intervalos para rótulos legíveis
+            const labelsLegiveis = {
+                hoje: 'Hoje',
+                ontem: 'Ontem',
+                ultima_semana: 'Última Semana',
+                este_mes: 'Este Mês',
+                mes_passado: 'Mês Passado'
+            };
+    
+            setChartData({
+                labels: Object.keys(intervalos).map(key => labelsLegiveis[key]),
+                datasets: [{
+                    label: 'Novos usuários',
+                    data: Object.values(intervalos),
+                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                    borderWidth: 1
+                }]
+            });
+        } catch (error) {
+            console.error('Erro ao buscar dados dos usuários', error);
+        }
+    }, [idUsuario]);
+    
+
+    useEffect(() => {
+        getUsuariosNovos();
+    }, [getUsuariosNovos]);
+
+    // Opções para o gráfico
+    const options = {
+        scales: {
+            x: {
+                type: 'category'
+            },
+            y: {
+                type: 'linear'
+            }
+        }
+    };
+
     return (
         <main className="page-content">
             <h6 className="text-uppercase">Dashboard</h6>
@@ -181,7 +247,7 @@ const Dashboard = () => {
                         <div className="card-body">
                             <div className="d-flex align-items-center">
                                 <div className="">
-                                    <p className="mb-1">Códigos</p>
+                                    <p className="mb-1">Códigos / Usuários</p>
                                     <h4 className="mb-0 text-primary">{(dadosInfoUser && dadosInfoUser.quantidade_codigos) || '0'}</h4>
                                 </div>
                                 <div className="ms-auto widget-icon bg-primary text-white">
@@ -255,10 +321,9 @@ const Dashboard = () => {
                         </div>
                     </div>
                 )}
-                <div className="col">
-
+                <div className="col-6">
                     <div className="card">
-                    <div className="card-header">
+                        <div className="card-header">
                             <div className="row">
                                 <div className="col">
                                     <h5 className="mb-0">Aviso</h5>
@@ -270,12 +335,26 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col">
+                <div className="col-6">
                     <div className="card">
                         <div className="card-header">
                             <div className="row">
                                 <div className="col">
-                                    <h5 className="mb-0">Códigos Vencendo</h5>
+                                    <h5 className="mb-0">Novos Usuários</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            {chartData.datasets.length > 0 && <Bar data={chartData} options={options} />}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12">
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="row">
+                                <div className="col">
+                                    <h5 className="mb-0">Códigos / Usuários vencendo</h5>
                                 </div>
                             </div>
                         </div>
@@ -284,6 +363,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+
             </div>
             {/* Modal de Renew */}
             <Modal centered show={showModalRenew} onHide={() => setShowModalRenew(false)}>

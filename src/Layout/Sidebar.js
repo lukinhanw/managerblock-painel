@@ -51,12 +51,19 @@ const Sidebar = () => {
         });
     }
 
+    const [info, setInfo] = useState(null);
+    useEffect(() => {
+        Api.get(`info-public`).then((response) => {
+            setInfo(response.data[0]);
+        });
+    }, []);
+    
     return (
         <>
             <aside className="sidebar-wrapper">
                 <div className="sidebar-header">
                     <div className="logo-icon">
-                        <img src="assets/images/logo-icon.png" className="logo-img" alt="" />
+                        <img src={info && info.logo} className="logo-img" alt="" />
                     </div>
                     <div className="logo-name flex-grow-1">
                         <h5 className="mb-0">{data.titulo_painel}</h5>
@@ -137,7 +144,7 @@ const Sidebar = () => {
                                             <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}> 
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
-                                                        <span class="material-symbols-outlined">
+                                                        <span className="material-symbols-outlined">
                                                             person
                                                         </span>
                                                     </div>
