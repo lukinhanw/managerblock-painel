@@ -13,6 +13,7 @@ const Ajustes = () => {
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     const [initialData, setInitialData] = useState(null);
     const navigate = useNavigate();
+    const { token } = JSON.parse(localStorage.getItem("user_token"))
 
     const {
         register,
@@ -31,7 +32,7 @@ const Ajustes = () => {
         Api.get(`info/${idUsuario}`).then((response) => {
             setDadosInfoUser(response.data);
         });
-        
+
     }, [idUsuario]);
 
     //Redireciona caso nao seja admin
@@ -46,7 +47,7 @@ const Ajustes = () => {
             await Api.put(`ajustes-painel`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-    
+
             setStatus({
                 success: true,
                 message: "Ajustes do Painel editado com sucesso."
@@ -56,7 +57,7 @@ const Ajustes = () => {
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao editar ajustes do painel";
             setStatus({ success: false, message: errorMessage });
         }
-    };    
+    };
 
     if (!initialData) {
         return <div>Carregando...</div>;  // Ou algum componente de carregamento
@@ -86,6 +87,7 @@ const Ajustes = () => {
                         </div>
                         <div className="card-body p-4">
                             <form onSubmit={handleSubmit(onSubmit)}>
+                                <input type="hidden" defaultValue={token} {...register("token", { required: true })} />
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         Nome do Painel
