@@ -185,7 +185,7 @@ const EditarRevendedor = () => {
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("email", { required: true })} defaultValue={initialData.email} type="email" />
-                                        {errors.email && <small>Email de liberação é obrigatório.</small>}
+                                        {errors.email && <small>Email é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">

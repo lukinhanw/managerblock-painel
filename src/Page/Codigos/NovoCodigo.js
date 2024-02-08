@@ -96,6 +96,7 @@ const NovoCodigo = () => {
                                         {errors.codigo && <small>Código de liberação é obrigatório.</small>}
                                     </div>
                                 </div>
+                                
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         Senha de Liberação *
@@ -105,6 +106,7 @@ const NovoCodigo = () => {
                                         {errors.senha_liberacao && <small>Senha de liberação é obrigatório.</small>}
                                     </div>
                                 </div>
+
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         E-mail

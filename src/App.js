@@ -29,6 +29,7 @@ import { Modal } from 'react-bootstrap';
 import NovoUsuario from './Page/Usuarios/NovoUsuario';
 import EditarUsuario from './Page/Usuarios/EditarUsuario';
 import ListarUsuarios from './Page/Usuarios/ListarUsuarios';
+import NovoUsuarioTeste from './Page/Testes/NovoUsuarioTeste';
 
 function AuthenticatedRoutes() {
 	return (
@@ -40,6 +41,7 @@ function AuthenticatedRoutes() {
 			<Route path="/editar-codigo/:id" element={<EditarCodigo />} />
 			<Route path="/novo-revendedor" element={<NovoRevendedor />} />
 			<Route path="/listar-revendedores" element={<ListarRevendedores />} />
+			<Route path="/novo-usuario-teste" element={<NovoUsuarioTeste />} />
 			<Route path="/editar-revendedor/:id" element={<EditarRevendedor />} />
 			<Route path="/editar-codigo/:id" element={<EditarRevendedor />} />
 			<Route path="/novo-teste" element={<NovoTeste />} />

@@ -59,7 +59,11 @@ const Sidebar = () => {
                         <img src="assets/images/logo-icon.png" className="logo-img" alt="" />
                     </div>
                     <div className="logo-name flex-grow-1">
-                        <h5 className="mb-0">{data.titulo_painel}</h5>
+                        {data.logo ? (
+                            <img src={data.logo} height="50" alt="" />
+                        ) : (
+                            <h5 className="mb-0">{data.titulo_painel}</h5>
+                        )}
                     </div>
                     <div className="sidebar-close" onClick={handleButtonClick}>
                         <span className="material-symbols-outlined">close</span>
@@ -193,7 +197,15 @@ const Sidebar = () => {
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
-                                                                Novo Teste - {dadosInfoUser && dadosInfoUser.hora_teste} Hora(s)
+                                                                Código Teste - {dadosInfoUser && dadosInfoUser.hora_teste}hr(s)
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link to="/novo-usuario-teste">
+                                                                <span className="material-symbols-outlined">
+                                                                    subdirectory_arrow_right
+                                                                </span>
+                                                                Usuário Teste - {dadosInfoUser && dadosInfoUser.hora_teste}hr(s)
                                                             </Link>
                                                         </li>
                                                     </ul>

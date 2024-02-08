@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Api from '../../Api';
 
-const NovoTeste = () => {
+const NovoUsuarioTeste = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' });
 
@@ -31,7 +31,7 @@ const NovoTeste = () => {
 
     const onSubmit = async (dados) => {
         try {
-            await Api.post('novo-teste', JSON.stringify(dados), {
+            await Api.post('novo-usuario-teste', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
             setStatus({
@@ -85,20 +85,20 @@ const NovoTeste = () => {
 
                                 <div className="row mb-3">
                                     <label className="col-sm-3 col-form-label">
-                                        Usuário de Liberação *
+                                        Usuário*
                                     </label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" {...register("codigo", { required: true })} type="text" />
-                                        {errors.codigo && <small>Código de liberação é obrigatório.</small>}
+                                        <input className="form-control" {...register("usuario", { required: true })} type="text" />
+                                        {errors.usuario && <small>Código é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-3 col-form-label">
-                                        Senha de Liberação *
+                                        Senha*
                                     </label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" {...register("senha_liberacao", { required: true })} type="text" />
-                                        {errors.senha_liberacao && <small>Senha de liberação é obrigatório.</small>}
+                                        <input className="form-control" {...register("senha", { required: true })} type="text" />
+                                        {errors.senha && <small>Senha de liberação é obrigatório.</small>}
                                     </div>
                                 </div>
 
@@ -135,24 +135,6 @@ const NovoTeste = () => {
                                     </div>
                                 </div>
                                 <hr />
-                                <div className="row mb-3">
-                                    <label className="col-sm-3 col-form-label">
-                                        Usuario do Servidor *
-                                    </label>
-                                    <div className="col-sm-9">
-                                        <input className="form-control" {...register("usuario_servidor")} />
-                                        {errors.usuario_servidor && <small>Usuário do Servidor é obrigatório.</small>}
-                                    </div>
-                                </div>
-                                <div className="row mb-3">
-                                    <label className="col-sm-3 col-form-label">
-                                        Senha do Servidor *
-                                    </label>
-                                    <div className="col-sm-9">
-                                        <input className="form-control" {...register("senha_servidor")} />
-                                        {errors.senha_servidor && <small>Usuário do Senha é obrigatório.</small>}
-                                    </div>
-                                </div>
                                 <div className="row mt-5">
                                     <label className="col-sm-3 col-form-label"></label>
                                     <div className="col-sm-9">
@@ -171,4 +153,4 @@ const NovoTeste = () => {
     );
 }
 
-export default NovoTeste;
+export default NovoUsuarioTeste;

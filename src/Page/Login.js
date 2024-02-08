@@ -29,7 +29,7 @@ const Login = () => {
         if (info) {
             document.body.style.backgroundImage = `url(${info.background})`;
             document.body.style.backgroundRepeat = "no-repeat";
-            document.body.style.backgroundSize = "auto";
+            document.body.style.backgroundSize = "cover";
         }
 
         // Removendo os estilos quando o componente é desmontado
