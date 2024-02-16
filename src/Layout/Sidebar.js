@@ -141,7 +141,7 @@ const Sidebar = () => {
                                             <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}> 
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
-                                                        <span class="material-symbols-outlined">
+                                                        <span className="material-symbols-outlined">
                                                             person
                                                         </span>
                                                     </div>
