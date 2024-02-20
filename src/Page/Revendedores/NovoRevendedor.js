@@ -87,6 +87,7 @@ const NovoRevendedor = () => {
                 success: true,
                 message: "Revendedor criado com sucesso."
             });
+            window.scrollTo(0, 0);
             reset();
         } catch (error) {
             console.error('Erro ao criar revendedor:', error);

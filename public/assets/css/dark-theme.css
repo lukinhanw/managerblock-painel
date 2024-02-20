@@ -74,15 +74,15 @@
 /* sidebar */
 
 
-[data-bs-theme=dark] .sidebar-wrapper .sidebar-nav,
-[data-bs-theme=dark] .sidebar-wrapper .sidebar-header,
-[data-bs-theme=dark] .sidebar-wrapper .sidebar-bottom,
+[data-bs-theme=dark] .sidebar-wrapper .sidebar-nav, 
+[data-bs-theme=dark] .sidebar-wrapper .sidebar-header, 
+[data-bs-theme=dark] .sidebar-wrapper .sidebar-bottom, 
 [data-bs-theme=dark] .sidebar-wrapper {
-    background-color: var(--bs-body-bg);
-    border-color:var(--bs-border-color-translucent);
+    background: linear-gradient(30deg, rgba(13, 16, 26, 0.8) .4%, rgba(46, 48, 54, 0.8) 0.2%), 
+    url('https://azouaoui-med.github.io/pro-sidebar-template/assets/images/sidebar-bg.jpg');
+    background-size: cover;
+    border-color: var(--bs-border-color-translucent);
 }
-
-
 
 [data-bs-theme=dark] .sidebar-wrapper .sidebar-bottom .user-info .user-name {
     color: var(--bs-light-text);
@@ -126,7 +126,7 @@
 }
 
 [data-bs-theme=dark] .sidebar-wrapper .metismenu ul {
-    background-color: var(--bs-body-bg);
+    background-color: none;
 }
 
 

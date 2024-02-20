@@ -53,3 +53,58 @@ $theme-colors: (
 }
 
 @import "~bootstrap/scss/bootstrap";
+
+// Custom CSS
+
+.hide-on-desktop {
+    display: none;
+
+    @media (max-width: 768px) {
+        display: block;
+    }
+}
+
+.hide-on-mobile {
+    display: block;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #212529;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #252a2e;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #282f34;
+}
+
+.btn-menu {
+    align-items: center;
+    background: none !important;
+    border-radius: 50%;
+    border: none !important;
+    color: #dee2e6;
+    cursor: pointer;
+    display: flex;
+    font-size: 22px;
+    height: 35px;
+    justify-content: center;
+    width: 35px;
+    top: 69px !important;
+    left: 12px !important;
+    position: relative !important;
+}

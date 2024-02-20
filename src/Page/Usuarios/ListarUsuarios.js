@@ -111,7 +111,7 @@ const ListarUsuarios = () => {
                         Header: "Usuário",
                         accessor: row => `${row.nome || '-'} ${row.usuario || ''} ${row.whatsapp || ''}`,
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
+                            <span to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
                                 <span className="font-weight-bold text-white">{original.usuario}</span>
 
                                 <div className="d-flex align-items-center me-1">
@@ -125,9 +125,13 @@ const ListarUsuarios = () => {
                                         </span>
                                     }
                                     <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
-                                    <div className={`badge bg-secondary ms-1 ${original.whatsapp ? '' : 'd-none'}`}><Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i> {original.whatsapp || '-'}</Link></div>
+                                    <div className={`badge bg-secondary ms-1 ${original.whatsapp ? '' : 'd-none'}`}>
+                                        <Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i>
+                                            {original.whatsapp || '-'}
+                                        </Link>
+                                    </div>
                                 </div>
-                            </Link>
+                            </span>
                         ),
                     },
                     {
@@ -189,11 +193,7 @@ const ListarUsuarios = () => {
                     {
                         id: 'acoes',
                         Header: () => (
-                            <div
-                                style={{
-                                    textAlign: "center"
-                                }}
-                            >Ações</div>
+                            <div style={{ textAlign: "center" }} >Ações</div>
                         ),
                         accessor: row => row.data_vencimento || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Api from '../Api';
 import { Link } from 'react-router-dom';
 import Table from '../Components/Table';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { Button, Modal } from 'react-bootstrap';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 const Dashboard = () => {
 
@@ -13,6 +15,11 @@ const Dashboard = () => {
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
     const [modalData, setModalData] = useState({})
     const [showModalRenew, setShowModalRenew] = useState(false);
+
+    // Registrando os componentes necessários do Chart.js
+    ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+    const [chartData, setChartData] = useState({ labels: [], datasets: [] });
 
     useEffect(() => {
         Api.get(`ajustes`).then((response) => {
@@ -57,7 +64,7 @@ const Dashboard = () => {
                     // Convertendo as strings de data para objetos Date
                     const dateA = new Date(a.data_validade);
                     const dateB = new Date(b.data_validade);
-    
+
                     // Comparando as datas
                     return dateA - dateB;
                 });
@@ -67,7 +74,7 @@ const Dashboard = () => {
             }
         }
         fetchData();
-    }, [status, idUsuario]);    
+    }, [status, idUsuario]);
 
     const columnsCodigos = React.useMemo(
         () => [
@@ -78,25 +85,47 @@ const Dashboard = () => {
                 id: 'id',
                 columns: [
                     {
-                        Header: "#",
-                        accessor: row => <Link to={`/editar-codigo/${row.id}`}>{row.id ?? '-'}</Link>
-                    },
-                    {
-                        Header: "Código",
+                        id: 'Codigo',
                         accessor: row => row.codigo || '-',
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
-                        ),
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "left" }}>Código</div>),
+                        Cell: ({ cell: { value }, row: { original } }) => {
+                            let formattedDate = original.data_validade;
+                            let dateClass = '';
+                            if (original.data_validade !== '-') {
+                                const currentDate = new Date();
+                                const dateObj = parseISO(original.data_validade);
+                                const daysDifference = differenceInDays(dateObj, currentDate);
+
+                                if (daysDifference < 0) {
+                                    formattedDate = "Expirado";
+                                    dateClass = "bg-danger";
+                                } else if (daysDifference <= 3) {
+                                    dateClass = "bg-danger";
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                } else if (daysDifference <= 7) {
+                                    dateClass = "bg-warning";
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                } else {
+                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
+                                }
+                            }
+                            return (
+                                <>
+                                    <div className="d-flex mb-1">
+                                        <Link className='me-2' to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
+                                        <span className={`badge bg-info hide-on-desktop me-2`}>{original.servidor}</span>
+                                    </div>
+                                    <div className="d-flex">
+                                        <span className={`badge ${dateClass} hide-on-desktop me-2`}> {formattedDate} </span>
+                                        <span className={`badge bg-dark hide-on-desktop fs-7`}>{original.nome_dono}</span>
+                                    </div>
+                                </>
+                            )
+                        },
                     },
                     {
                         id: 'data_validade',
-                        Header: () => (
-                            <div
-                                style={{
-                                    textAlign: "center"
-                                }}
-                            >Validade</div>
-                        ),
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "center" }}>Validade</div>),
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             let formattedDate = value;
@@ -119,44 +148,44 @@ const Dashboard = () => {
                                 } else {
                                     formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                                 }
-                                // formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
                             }
 
                             return (
                                 <div className={`d-flex justify-content-center`}>
-                                    <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
+                                    <Link className={`${dateClass} hide-on-mobile`} to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
+                                    <Link className='hide-on-desktop fs-4' style={{paddingTop: 5}} onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                        <span className="material-symbols-outlined">
+                                            calendar_add_on
+                                        </span>
+                                    </Link>
                                 </div>
                             )
                         }
                     },
                     {
-                        Header: "Servidor",
+                        id: 'servidor',
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "left" }}>Servidor</div>),
                         accessor: row => row.servidor || '-',
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
+                            <Link className='hide-on-mobile' to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
                         ),
                     },
                     {
-                        Header: "Dono",
+                        id: 'nome_dono',
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "left" }}>Dono</div>),
                         accessor: row => row.nome_dono || '-',
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
+                            <Link className='hide-on-mobile' to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
                         ),
                     },
                     {
                         id: 'acoes',
-                        Header: () => (
-                            <div
-                                style={{
-                                    textAlign: "center"
-                                }}
-                            >Ações</div>
-                        ),
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "center" }}>Renovar</div>),
                         accessor: row => row.data_vencimento || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
                                 <div className="d-flex justify-content-center">
-                                    <Link className='fs-4' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                    <Link className='hide-on-mobile fs-4' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -171,20 +200,80 @@ const Dashboard = () => {
         [token]
     );
 
+    const getUsuariosNovos = useCallback(async () => {
+        try {
+            const response = await Api.get(`/listar-usuarios-intervalo/${idUsuario}`);
+            let data = response.data;
+
+            let intervalos = {
+                hoje: 0,
+                ontem: 0,
+                ultima_semana: 0,
+                este_mes: 0,
+                mes_passado: 0
+            };
+
+            // Processamento dos dados
+            data.forEach(item => {
+                if (intervalos.hasOwnProperty(item.intervalo)) {
+                    intervalos[item.intervalo] = item.quantidade;
+                }
+            });
+
+            // Mapeando os intervalos para rótulos legíveis
+            const labelsLegiveis = {
+                hoje: 'Hoje',
+                ontem: 'Ontem',
+                ultima_semana: 'Última Semana',
+                este_mes: 'Este Mês',
+                mes_passado: 'Mês Passado'
+            };
+
+            setChartData({
+                labels: Object.keys(intervalos).map(key => labelsLegiveis[key]),
+                datasets: [{
+                    label: 'Novos usuários',
+                    data: Object.values(intervalos),
+                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                    borderWidth: 1
+                }]
+            });
+        } catch (error) {
+            console.error('Erro ao buscar dados dos usuários', error);
+        }
+    }, [idUsuario]);
+
+    useEffect(() => {
+        getUsuariosNovos();
+    }, [getUsuariosNovos]);
+
+    // Opções para o gráfico
+    const options = {
+        scales: {
+            x: {
+                type: 'category'
+            },
+            y: {
+                type: 'linear'
+            }
+        }
+    };
+
+
     return (
         <main className="page-content">
             <h6 className="text-uppercase">Dashboard</h6>
             <hr />
             <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-4 row-cols-xxl-4">
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-primary border-4">
+                    <div className="card radius-10 bg-info border-4">
                         <div className="card-body">
                             <div className="d-flex align-items-center">
                                 <div className="">
-                                    <p className="mb-1">Códigos</p>
-                                    <h4 className="mb-0 text-primary">{(dadosInfoUser && dadosInfoUser.quantidade_codigos) || '0'}</h4>
+                                    <p className="mb-1 fs-7 text-dark">Códigos / Usuários</p>
+                                    <h4 className="mb-0 text-dark">{(dadosInfoUser && dadosInfoUser.quantidade_codigos) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-primary text-white">
+                                <div className="ms-auto widget-icon bg-dark text-white">
                                     <span className="material-symbols-outlined"> password </span>
                                 </div>
                             </div>
@@ -192,12 +281,12 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-light border-4">
+                    <div className="card radius-10 bg-secondary">
                         <div className="card-body">
                             <div className="d-flex align-items-center">
                                 <div className="">
-                                    <p className="mb-1">Testes</p>
-                                    <h4 className="mb-0 text-light">{(dadosInfoUser && dadosInfoUser.quantidade_testes) || '0'}</h4>
+                                    <p className="mb-1 fs-7 text-dark">Testes</p>
+                                    <h4 className="mb-0 text-dark">{(dadosInfoUser && dadosInfoUser.quantidade_testes) || '0'}</h4>
                                 </div>
                                 <div className="ms-auto widget-icon bg-light text-white">
                                     <span className="material-symbols-outlined">
@@ -209,14 +298,14 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-warning border-4">
+                    <div className="card radius-10 bg-warning">
                         <div className="card-body">
                             <div className="d-flex align-items-center">
                                 <div className="">
-                                    <p className="mb-1">Revendedores</p>
-                                    <h4 className="mb-0 text-warning">{(dadosInfoUser && dadosInfoUser.quantidade_revendedores) || '0'}</h4>
+                                    <p className="mb-1 fs-7 text-dark">Revendedores</p>
+                                    <h4 className="mb-0 text-dark">{(dadosInfoUser && dadosInfoUser.quantidade_revendedores) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-warning text-white">
+                                <div className="ms-auto widget-icon bg-light text-white">
                                     <span className="material-symbols-outlined">
                                         group
                                     </span>
@@ -226,14 +315,14 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-success border-4">
+                    <div className="card radius-10 bg-success">
                         <div className="card-body">
                             <div className="d-flex align-items-center">
                                 <div className="">
-                                    <p className="mb-1">Créditos</p>
-                                    <h4 className="mb-0 text-success">{(dadosInfoUser && dadosInfoUser.creditos) || '0'}</h4>
+                                    <p className="mb-1 fs-7 text-dark">Créditos</p>
+                                    <h4 className="mb-0 text-dark">{(dadosInfoUser && dadosInfoUser.creditos) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-success text-white">
+                                <div className="ms-auto widget-icon bg-light text-white">
                                     <span className="material-symbols-outlined">
                                         monetization_on
                                     </span>
@@ -255,27 +344,40 @@ const Dashboard = () => {
                         </div>
                     </div>
                 )}
-                <div className="col">
-
-                    <div className="card">
-                    <div className="card-header">
-                            <div className="row">
-                                <div className="col">
-                                    <h5 className="mb-0">Aviso</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card-body">
-                            <div dangerouslySetInnerHTML={{ __html: (dadosAjustes && dadosAjustes.informativo) }}></div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col">
+                <div className="col-12 col-md-6">
                     <div className="card">
                         <div className="card-header">
                             <div className="row">
                                 <div className="col">
-                                    <h5 className="mb-0">Códigos Vencendo</h5>
+                                    <h5 className="mb-0 fs-6">Avisos</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card-body" style={{ height: 350, overflow: 'auto' }}>
+                            <div dangerouslySetInnerHTML={{ __html: (dadosAjustes && dadosAjustes.informativo) }}></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-md-6">
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="row">
+                                <div className="col">
+                                    <h5 className="mb-0 fs-6">Novos Usuários</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card-body" style={{ height: 350, overflow: 'auto' }}>
+                            {chartData.datasets.length > 0 && <Bar data={chartData} options={options} />}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12">
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="row">
+                                <div className="col">
+                                    <h5 className="mb-0 fs-6">Códigos / Usuários vencendo</h5>
                                 </div>
                             </div>
                         </div>
@@ -284,6 +386,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+
             </div>
             {/* Modal de Renew */}
             <Modal centered show={showModalRenew} onHide={() => setShowModalRenew(false)}>

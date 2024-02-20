@@ -41,7 +41,6 @@ const Ajustes = () => {
     }
 
     const onSubmit = async (dados) => {
-        console.log(dados);
         try {
             await Api.put(`ajustes-painel`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
@@ -51,6 +50,8 @@ const Ajustes = () => {
                 success: true,
                 message: "Ajustes do Painel editado com sucesso."
             });
+            window.scrollTo(0, 0);
+            
         } catch (error) {
             console.error('Erro ao editar ajustes do painel:', error);
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao editar ajustes do painel";

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
-import { Link } from "react-router-dom";
 
 function Table({ columns, data, length = 10, showFilter = true, showMenu = true }) {
     const props = useTable(
@@ -61,7 +60,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
             <div className="contact-list-area">
                 <div className="container-fluid mb-3">
                     <div className="table-responsive w-100">
-                        <table {...getTableProps()} className="table align-middle mb-1 mt-4 text-nowrap">
+                        <table {...getTableProps()} className="table align-middle mb-1 text-nowrap">
                             <thead>
                                 {headerGroups.map(headerGroup => (
                                     <tr {...headerGroup.getHeaderGroupProps()}>
@@ -107,18 +106,18 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                 <nav className='pagination_table'>
                     <ul className="pagination justify-content-end custom-style">
                         <li className="page-item">
-                            <Link onClick={() => previousPage()} disabled={!canPreviousPage} className="page-link" to="#">
+                            <button onClick={() => previousPage()} disabled={!canPreviousPage} className="page-link">
                                 <span className="material-symbols-outlined">
                                     chevron_left
                                 </span>
-                            </Link>
+                            </button>
                         </li>
                         <li className="page-item">
-                            <Link onClick={() => nextPage()} disabled={!canNextPage} className="page-link" to="#">
+                            <button onClick={() => nextPage()} disabled={!canNextPage} className="page-link">
                                 <span className="material-symbols-outlined">
                                     chevron_right
                                 </span>
-                            </Link>
+                            </button>
                         </li>
                     </ul>
                 </nav>

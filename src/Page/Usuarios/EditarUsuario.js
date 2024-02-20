@@ -61,6 +61,7 @@ const EditarUsuario = () => {
                 headers: { 'Content-Type': 'application/json' }
             });
             setStatus({ success: true, message: "Usuário editado com sucesso." });
+            window.scrollTo(0, 0);
         } catch (error) {
             console.error('Erro ao editar usuário:', error);
             const errorMessage = error.response?.data?.error || error.message || "Erro desconhecido";

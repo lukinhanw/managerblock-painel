@@ -42,6 +42,7 @@ const NovoCodigo = () => {
                 success: true,
                 message: "Código criado com sucesso."
             });
+            window.scrollTo(0, 0);
             setShowModalAdd(true);
             reset();
         } catch (error) {

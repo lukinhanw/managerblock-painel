@@ -61,6 +61,7 @@ const EditarCodigo = () => {
                 headers: { 'Content-Type': 'application/json' }
             });
             setStatus({ success: true, message: "Código editado com sucesso." });
+            window.scrollTo(0, 0);
         } catch (error) {
             console.error('Erro ao editar código:', error);
             const errorMessage = error.response?.data?.error || error.message || "Erro desconhecido";

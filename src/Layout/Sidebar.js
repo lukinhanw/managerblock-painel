@@ -40,20 +40,16 @@ const Sidebar = () => {
     };
 
     const [isActive, setIsActive] = useState(false)
-    const handleButtonClick = () => { // nova função para lidar com o click
-        setIsActive(!isActive);
-
-        const sidebar = document.querySelector('.sidebar-wrapper');
-        const sidebarClose = document.querySelector('.sidebar-close');
-
-        sidebarClose.addEventListener('click', function () {
-            sidebar.classList.toggle('active');
-        });
+    const handleButtonClick = () => {
+        setIsActive(!isActive); // Isso vai alternar o estado cada vez que o botão é clicado
     }
 
     return (
         <>
-            <aside className="sidebar-wrapper">
+            <button className="btn-menu" onClick={handleButtonClick}>
+                <span className="material-symbols-outlined"> text_select_jump_to_end </span>
+            </button>
+            <aside className={`sidebar-wrapper ${isActive ? 'active' : ''}`}>
                 <div className="sidebar-header">
                     <div className="logo-icon">
                         <img src="assets/images/logo-icon.png" className="logo-img" alt="" />
@@ -66,7 +62,7 @@ const Sidebar = () => {
                         )}
                     </div>
                     <div className="sidebar-close" onClick={handleButtonClick}>
-                        <span className="material-symbols-outlined">close</span>
+                        <span className="material-symbols-outlined"> text_select_move_back_word </span>
                     </div>
                 </div>
                 <div className="sidebar-nav" data-simplebar="init">
@@ -85,7 +81,7 @@ const Sidebar = () => {
                                             </li>
 
                                             <li>
-                                                <Link to="/">
+                                                <Link to="/" onClick={handleButtonClick}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
                                                             home
@@ -119,7 +115,7 @@ const Sidebar = () => {
                                                 {menuOpen.codigo && (
                                                     <ul className="ms-3">
                                                         <li>
-                                                            <Link to="/novo-codigo">
+                                                            <Link to="/novo-codigo" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -127,7 +123,7 @@ const Sidebar = () => {
                                                             </Link>
                                                         </li>
                                                         <li>
-                                                            <Link to="/listar-codigos">
+                                                            <Link to="/listar-codigos" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -138,7 +134,7 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
-                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}> 
+                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -156,7 +152,7 @@ const Sidebar = () => {
                                                 {menuOpen.usuario && (
                                                     <ul className="ms-3">
                                                         <li>
-                                                            <Link to="/novo-usuario">
+                                                            <Link to="/novo-usuario" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -164,7 +160,7 @@ const Sidebar = () => {
                                                             </Link>
                                                         </li>
                                                         <li>
-                                                            <Link to="/listar-usuarios">
+                                                            <Link to="/listar-usuarios" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -193,7 +189,7 @@ const Sidebar = () => {
                                                 {menuOpen.teste && (
                                                     <ul className="ms-3">
                                                         <li>
-                                                            <Link to="/novo-teste">
+                                                            <Link to="/novo-teste" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -201,7 +197,7 @@ const Sidebar = () => {
                                                             </Link>
                                                         </li>
                                                         <li>
-                                                            <Link to="/novo-usuario-teste">
+                                                            <Link to="/novo-usuario-teste" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -232,7 +228,7 @@ const Sidebar = () => {
                                                         {dadosInfoUser && dadosInfoUser.id_dono === 0 ?
                                                             (
                                                                 <li>
-                                                                    <Link to="/novo-revendedor">
+                                                                    <Link to="/novo-revendedor" onClick={handleButtonClick}>
                                                                         <span className="material-symbols-outlined">
                                                                             subdirectory_arrow_right
                                                                         </span>
@@ -242,7 +238,7 @@ const Sidebar = () => {
                                                             ) : ''
                                                         }
                                                         <li>
-                                                            <Link to="/listar-revendedores">
+                                                            <Link to="/listar-revendedores" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -276,7 +272,7 @@ const Sidebar = () => {
                                                 {menuOpen.logs && (
                                                     <ul className="ms-3">
                                                         <li>
-                                                            <Link to="/logs-creditos">
+                                                            <Link to="/logs-creditos" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -284,7 +280,7 @@ const Sidebar = () => {
                                                             </Link>
                                                         </li>
                                                         <li>
-                                                            <Link to="/logs-acoes">
+                                                            <Link to="/logs-acoes" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -309,7 +305,7 @@ const Sidebar = () => {
                                                                     settings
                                                                 </span>
                                                             </div>
-                                                            <div className="menu-title">
+                                                            <div className="menu-title" onClick={handleButtonClick}>
                                                                 Ajustes
                                                             </div>
                                                         </Link>

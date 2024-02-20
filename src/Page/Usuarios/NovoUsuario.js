@@ -44,6 +44,7 @@ const NovoUsuario = () => {
             });
             setShowModalAdd(true);
             reset();
+            window.scrollTo(0, 0);
         } catch (error) {
             console.error('Erro ao criar código:', error);
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao criar usuário";

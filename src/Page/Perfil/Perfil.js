@@ -40,6 +40,7 @@ const Perfil = () => {
                 success: true,
                 message: "Perfil editado com sucesso."
             });
+            window.scrollTo(0, 0);
 
         } catch (error) {
             if (error.response) {

@@ -123,6 +123,8 @@ const EditarRevendedor = () => {
                 success: true,
                 message: "Revendedor editado com sucesso."
             });
+            window.scrollTo(0, 0);
+            
         } catch (error) {
             console.error('Erro ao editar revendedor:', error);
             // Define uma mensagem de erro baseada na resposta ou no erro genérico
