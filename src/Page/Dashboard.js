@@ -96,7 +96,7 @@ const Dashboard = () => {
                                 const dateObj = parseISO(original.data_validade);
                                 const daysDifference = differenceInDays(dateObj, currentDate);
 
-                                if (daysDifference < 0) {
+                                if (daysDifference <= 0) {
                                     formattedDate = "Expirado";
                                     dateClass = "bg-danger";
                                 } else if (daysDifference <= 3) {
@@ -136,7 +136,7 @@ const Dashboard = () => {
                                 const dateObj = parseISO(value);
                                 const daysDifference = differenceInDays(dateObj, currentDate);
 
-                                if (daysDifference < 0) {
+                                if (daysDifference <= 0) {
                                     formattedDate = "Expirado";
                                     dateClass = "text-danger";
                                 } else if (daysDifference <= 3) {

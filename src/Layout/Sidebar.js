@@ -188,7 +188,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.teste && (
                                                     <ul className="ms-3">
-                                                        <li>
+                                                        <li className={data.exibir_codigos === '0' ? 'd-none' : ''}>
                                                             <Link to="/novo-teste" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -196,7 +196,7 @@ const Sidebar = () => {
                                                                 Código Teste - {dadosInfoUser && dadosInfoUser.hora_teste}hr(s)
                                                             </Link>
                                                         </li>
-                                                        <li>
+                                                        <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}>
                                                             <Link to="/novo-usuario-teste" onClick={handleButtonClick}>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right

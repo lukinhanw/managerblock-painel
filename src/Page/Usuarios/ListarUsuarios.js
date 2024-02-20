@@ -154,7 +154,7 @@ const ListarUsuarios = () => {
                                 const dateObj = parseISO(value);
                                 const daysDifference = differenceInDays(dateObj, currentDate);
 
-                                if (daysDifference < 0) {
+                                if (daysDifference <= 0) {
                                     formattedDate = "Expirado";
                                     dateClass = "text-danger";
                                 } else if (daysDifference <= 3) {
