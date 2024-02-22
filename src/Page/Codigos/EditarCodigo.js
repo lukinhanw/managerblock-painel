@@ -148,6 +148,7 @@ const EditarCodigo = () => {
                                                         onChange={(date) => field.onChange(date)}
                                                         selected={field.value}
                                                         locale="pt-BR"
+                                                        readOnly={dadosInfoUser && dadosInfoUser.id_dono !== 0}
                                                     />
                                                 )}
                                             />
