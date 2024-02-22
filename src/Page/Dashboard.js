@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Api from '../Api';
 import { Link } from 'react-router-dom';
 import Table from '../Components/Table';
-import { differenceInDays, format, parseISO } from 'date-fns';
 import { Button, Modal } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { checkDateStatus } from '../Components/Utils';
 
 const Dashboard = () => {
 
@@ -89,34 +89,22 @@ const Dashboard = () => {
                         accessor: row => row.codigo || '-',
                         Header: () => (<div className='hide-on-mobile' style={{ textAlign: "left" }}>Código</div>),
                         Cell: ({ cell: { value }, row: { original } }) => {
-                            let formattedDate = original.data_validade;
-                            let dateClass = '';
-                            if (original.data_validade !== '-') {
-                                const currentDate = new Date();
-                                const dateObj = parseISO(original.data_validade);
-                                const daysDifference = differenceInDays(dateObj, currentDate);
 
-                                if (daysDifference <= 0) {
-                                    formattedDate = "Expirado";
-                                    dateClass = "bg-danger";
-                                } else if (daysDifference <= 3) {
-                                    dateClass = "bg-danger";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                } else if (daysDifference <= 7) {
-                                    dateClass = "bg-warning";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                } else {
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                }
-                            }
+                            const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(original.data_validade);
+
                             return (
                                 <>
                                     <div className="d-flex mb-1">
-                                        <Link className='me-2' to={`/editar-codigo/${original.id}`}>{value || '-'}</Link>
-                                        <span className={`badge bg-info hide-on-desktop me-2`}>{original.servidor}</span>
+                                        <Link className='ps-2' to={`/editar-codigo/${original.id}`}>{value}</Link>
+                                        {original.tipo === 'teste' &&
+                                            <span className="ms-1 badge bg-warning">
+                                                Teste
+                                            </span>
+                                        }
+                                        {/* <span className={`badge bg-info hide-on-desktop me-2`}>{original.servidor}</span> */}
                                     </div>
                                     <div className="d-flex">
-                                        <span className={`badge ${dateClass} hide-on-desktop me-2`}> {formattedDate} </span>
+                                        <span className={`badge ${dateClass} hide-on-desktop me-2`}> {formattedDate} {formattedDateHora} </span>
                                         <span className={`badge bg-dark hide-on-desktop fs-7`}>{original.nome_dono}</span>
                                     </div>
                                 </>
@@ -128,32 +116,13 @@ const Dashboard = () => {
                         Header: () => (<div className='hide-on-mobile' style={{ textAlign: "center" }}>Validade</div>),
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
-                            let formattedDate = value;
-                            let dateClass = '';
 
-                            if (value !== '-') {
-                                const currentDate = new Date();
-                                const dateObj = parseISO(value);
-                                const daysDifference = differenceInDays(dateObj, currentDate);
-
-                                if (daysDifference <= 0) {
-                                    formattedDate = "Expirado";
-                                    dateClass = "text-danger";
-                                } else if (daysDifference <= 3) {
-                                    dateClass = "text-danger";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                } else if (daysDifference <= 7) {
-                                    dateClass = "text-warning";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                } else {
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy HH:mm');
-                                }
-                            }
+                            const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(value);
 
                             return (
-                                <div className={`d-flex justify-content-center`}>
-                                    <Link className={`${dateClass} hide-on-mobile`} to={`/editar-codigo/${original.id}`}>{formattedDate}</Link>
-                                    <Link className='hide-on-desktop fs-4' style={{paddingTop: 5}} onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                <div className={`d-flex justify-content-center text-center align-items-center`}>
+                                    <Link className={`${dateClass} hide-on-mobile`} to={`/editar-codigo/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
+                                    <Link className='hide-on-desktop fs-4' style={{ paddingTop: 5 }} onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>

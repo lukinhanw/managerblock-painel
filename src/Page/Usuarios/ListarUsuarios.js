@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { differenceInDays, format, parseISO } from 'date-fns';
-
 import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
+import { checkDateStatus } from '../../Components/Utils';
 
 
 const ListarUsuarios = () => {
@@ -110,71 +109,56 @@ const ListarUsuarios = () => {
                     {
                         Header: "Usuário",
                         accessor: row => `${row.nome || '-'} ${row.usuario || ''} ${row.whatsapp || ''}`,
-                        Cell: ({ cell: { value }, row: { original } }) => (
-                            <span to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
-                                <span className="font-weight-bold text-white">{original.usuario}</span>
+                        Cell: ({ cell: { value }, row: { original } }) => {
 
-                                <div className="d-flex align-items-center me-1">
-                                    {original.status === 0 ?
-                                        <span className="badge bg-success">
-                                            Ativo
+                            const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(original.data_validade);
+
+                            return (
+                                <span to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
+                                    <span className="font-weight-bold text-white mb-1">
+                                        {original.usuario}
+                                        <span className={`ms-1 badge ${dateClass} hide-on-desktop`}>
+                                            {formattedDate} {formattedDateHora}
                                         </span>
-                                        :
-                                        <span className="badge bg-danger">
-                                            Bloqueado
-                                        </span>
-                                    }
-                                    <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
-                                    <div className={`badge bg-secondary ms-1 ${original.whatsapp ? '' : 'd-none'}`}>
-                                        <Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i>
-                                            {original.whatsapp || '-'}
-                                        </Link>
+                                    </span>
+
+                                    <div className="d-flex align-items-center me-1">
+                                        {original.status === 0 ?
+                                            <span className="badge bg-success">
+                                                Ativo
+                                            </span>
+                                            :
+                                            <span className="badge bg-danger">
+                                                Bloqueado
+                                            </span>
+                                        }
+                                        {original.tipo === 'teste' &&
+                                            <span className="ms-1 badge bg-warning">
+                                                Teste
+                                            </span>
+                                        }
+                                        <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
+                                        <div className={`badge bg-secondary ms-1 ${original.whatsapp ? '' : 'd-none'}`}>
+                                            <Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i>
+                                                {original.whatsapp || '-'}
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
-                            </span>
-                        ),
+                                </span>
+                            )
+                        },
                     },
                     {
                         id: 'data_validade',
-                        Header: () => (
-                            <div
-                                style={{
-                                    textAlign: "center",
-                                }}
-                            >Validade</div>
-                        ),
+                        Header: () => (<div className='hide-on-mobile text-center'>Validade</div>),
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
-                            let formattedDate = value;
-                            let formattedDateHora = '';
-                            let dateClass = '';
 
-                            if (value !== '-') {
-                                const currentDate = new Date();
-                                const dateObj = parseISO(value);
-                                const daysDifference = differenceInDays(dateObj, currentDate);
-
-                                if (daysDifference <= 0) {
-                                    formattedDate = "Expirado";
-                                    dateClass = "text-danger";
-                                } else if (daysDifference <= 3) {
-                                    dateClass = "text-danger";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                } else if (daysDifference <= 7) {
-                                    dateClass = "text-warning";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                } else {
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                }
-
-                            }
+                            const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(value);
 
                             return (
                                 <div className={`d-flex justify-content-center text-center align-items-center`}>
-                                    <Link className={dateClass} to={`/editar-usuario/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
+                                    <Link className={`${dateClass} hide-on-mobile`} to={`/editar-usuario/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
                                 </div>
                             )
                         }

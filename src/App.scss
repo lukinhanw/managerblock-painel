@@ -60,12 +60,12 @@ $theme-colors: (
     display: none;
 
     @media (max-width: 768px) {
-        display: block;
+        display: initial;
     }
 }
 
 .hide-on-mobile {
-    display: block;
+    display: initial;
 
     @media (max-width: 768px) {
         display: none;
