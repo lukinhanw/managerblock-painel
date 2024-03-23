@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 
-function Table({ columns, data, length = 10, showFilter = true, showMenu = true }) {
+function Table({ columns, data, length = 10, showFilter = true, showMenu = true, showFilterStats = true}) {
 
     // Adicione este estado no início do componente Table
     const [filter, setFilter] = React.useState("");
@@ -72,7 +72,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                         ))}
                     </select>
                 </div>
-                <div className={`col-md-3 ${showMenu ? '' : 'd-none'}`}>
+                <div className={`col-md-3 ${showFilterStats ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative float-end">
                         {/* <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i> */}
                     </span>
@@ -90,7 +90,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                         </select>
                     </div>
                 </div>
-                <div className={`col-md-6 ${showFilter ? '' : 'd-none'}`}>
+                <div className={`${showFilter ? '' : 'd-none'} ${showFilterStats ? 'col-md-3 offset-md-3' : 'col-md-3 offset-md-6'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>

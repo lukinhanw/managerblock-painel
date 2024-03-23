@@ -262,7 +262,7 @@ const ListarRevendedores = () => {
                                         </div>
                                     </div>
                                 )}
-                                <Table columns={columns} data={data} />
+                                <Table columns={columns} data={data} showFilterStats={false} />
                             </div>
                         </div>
                     </div>
