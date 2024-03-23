@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from "react-datepicker";
+import { IMaskInput } from 'react-imask';
 import ptBR from 'date-fns/locale/pt-BR';
 
 registerLocale('pt-BR', ptBR);
@@ -101,7 +102,7 @@ const EditarUsuario = () => {
                                 <input type="hidden" defaultValue={token} {...register("token", { required: true })} />
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Nome Completo *
+                                        Nome Completo*
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("nome", { required: true })} defaultValue={initialData.nome} />
@@ -167,12 +168,25 @@ const EditarUsuario = () => {
                                     </div>
                                 </div>
                                 <div className="row mb-3">
-                                    <label className="col-sm-4 col-form-label">
-                                        WhatsApp
-                                    </label>
+                                    <label className="col-sm-4 col-form-label">WhatsApp</label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" type='number' {...register("whatsapp")} defaultValue={initialData.whatsapp} />
-                                        {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
+                                        <Controller
+                                            name="whatsapp"
+                                            control={control}
+                                            rules={{ required: true }}
+                                            defaultValue={initialData.whatsapp}
+                                            render={({ field }) => (
+                                                <IMaskInput
+                                                    {...field}
+                                                    mask="(00) 00000-0000"
+                                                    placeholder="(XX) XXXXX-XXXX"
+                                                    unmask={true} // Decide se os valores devem incluir a máscara ou não
+                                                    onAccept={(value, mask) => field.onChange(value)} // Garante que o valor seja atualizado corretamente
+                                                    className={`form-control ${errors.whatsapp ? 'is-invalid' : ''}`}
+                                                />
+                                            )}
+                                        />
+                                        {errors.whatsapp && <small>WhatsApp é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <hr />

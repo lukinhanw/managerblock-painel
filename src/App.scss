@@ -65,7 +65,7 @@ $theme-colors: (
 }
 
 .hide-on-mobile {
-    display: initial;
+    display: block;
 
     @media (max-width: 768px) {
         display: none;

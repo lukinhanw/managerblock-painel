@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-// import InputMask from 'react-input-mask';
+import { useForm, Controller } from 'react-hook-form';
+import { IMaskInput } from 'react-imask';
 import Api from "../../Api";
 import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,7 @@ const NovoUsuario = () => {
         register,
         handleSubmit,
         reset,
+        control,
         // setValue,
         formState: { errors }
     } = useForm();
@@ -32,11 +33,12 @@ const NovoUsuario = () => {
     }, []);
 
     const onSubmit = async (dados) => {
+
         try {
             await Api.post('novo-usuario', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-    
+
             setModalData({ usuario: dados.usuario, senha: dados.senha });
             setStatus({
                 success: true,
@@ -44,13 +46,16 @@ const NovoUsuario = () => {
             });
             setShowModalAdd(true);
             reset();
-            window.scrollTo(0, 0);
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 1000);
         } catch (error) {
             console.error('Erro ao criar código:', error);
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao criar usuário";
             setStatus({ success: false, message: errorMessage });
         }
-    };    
+
+    };
 
     return (
         <main className="page-content">
@@ -80,7 +85,7 @@ const NovoUsuario = () => {
 
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Nome Completo *
+                                        Nome Completo*
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("nome", { required: true })} />
@@ -115,27 +120,39 @@ const NovoUsuario = () => {
                                     </div>
                                 </div>
                                 <div className="row mb-3">
-                                    <label className="col-sm-4 col-form-label">
-                                        WhatsApp
-                                    </label>
+                                    <label className="col-sm-4 col-form-label">WhatsApp*</label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
-                                        {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
+                                        <Controller
+                                            name="whatsapp"
+                                            control={control}
+                                            rules={{ required: true }}
+                                            render={({ field }) => (
+                                                <IMaskInput
+                                                    {...field}
+                                                    mask="(00) 00000-0000"
+                                                    placeholder="(XX) XXXXX-XXXX"
+                                                    unmask={true} // Decide se os valores devem incluir a máscara ou não
+                                                    onAccept={(value, mask) => field.onChange(value)} // Garante que o valor seja atualizado corretamente
+                                                    className={`form-control ${errors.whatsapp ? 'is-invalid' : ''}`}
+                                                />
+                                            )}
+                                        />
+                                        {errors.whatsapp && <small>WhatsApp é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Quantidade de Créditos * 
+                                        Créditos *
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" defaultValue="1" {...register("creditos", { required: true })} type="number" />
-                                        {errors.creditos && <small>Quantidade de créditos é obrigatória.</small>}
+                                        {errors.creditos && <small>Créditos é obrigatória.</small>}
                                     </div>
                                 </div>
                                 <hr />
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Selecione o Servidor *
+                                        Selecione o Servidor*
                                     </label>
                                     <div className="col-sm-8">
                                         <select className="form-control" {...register("servidor", { required: true })}>

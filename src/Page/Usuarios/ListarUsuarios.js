@@ -117,7 +117,7 @@ const ListarUsuarios = () => {
                                 <span to={`/editar-usuario/${original.id}`} className="d-flex flex-column align-items-start">
                                     <span className="font-weight-bold text-white mb-1">
                                         {original.usuario}
-                                        <span className={`ms-1 badge ${dateClass} hide-on-desktop`}>
+                                        <span className={`ms-1 badge fw-normal ${dateClass} hide-on-desktop`}>
                                             {formattedDate} {formattedDateHora}
                                         </span>
                                     </span>
@@ -139,7 +139,7 @@ const ListarUsuarios = () => {
                                         }
                                         <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
                                         <div className={`badge bg-secondary ms-1 ${original.whatsapp ? '' : 'd-none'}`}>
-                                            <Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i>
+                                            <Link className='text-dark' to={`http://wa.me/55${original.whatsapp.replace(/\D/g, '')}`} target='_blank'><i className="bi bi-whatsapp"></i>
                                                 {original.whatsapp || '-'}
                                             </Link>
                                         </div>
@@ -150,8 +150,9 @@ const ListarUsuarios = () => {
                     },
                     {
                         id: 'data_validade',
-                        Header: () => (<div className='hide-on-mobile text-center'>Validade</div>),
+                        Header: () => (<div className='hide-on-mobile' style={{ textAlign: "center" }}>Validade</div>),
                         accessor: row => row.data_validade || '-',
+                        isCentered: true,
                         Cell: ({ cell: { value }, row: { original } }) => {
 
                             const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(value);
@@ -176,9 +177,7 @@ const ListarUsuarios = () => {
                     },
                     {
                         id: 'acoes',
-                        Header: () => (
-                            <div style={{ textAlign: "center" }} >Ações</div>
-                        ),
+                        Header: () => (<div style={{ textAlign: "center" }}>Ações</div>),
                         accessor: row => row.data_vencimento || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
@@ -231,6 +230,7 @@ const ListarUsuarios = () => {
         }
         fetchData();
     }, [status, idUsuario]);
+
 
     return (
         <>

@@ -145,7 +145,7 @@ const NovoRevendedor = () => {
                                 <input type="hidden" defaultValue={token} {...register("token", { required: true })} />
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Nome Completo *
+                                        Nome Completo*
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("nome", { required: true })} />

@@ -66,7 +66,7 @@ const EditarTeste = () => {
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <div className="row mb-3">
                                     <label className="col-sm-3 col-form-label">
-                                        Nome Completo *
+                                        Nome Completo*
                                     </label>
                                     <div className="col-sm-9">
                                         <input className="form-control" {...register("nome", { required: true })} defaultValue={initialData.nome_completo} />

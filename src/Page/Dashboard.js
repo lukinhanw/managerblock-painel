@@ -229,6 +229,10 @@ const Dashboard = () => {
     };
 
 
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+    }, 100);
+
     return (
         <main className="page-content">
             <h6 className="text-uppercase">Dashboard</h6>

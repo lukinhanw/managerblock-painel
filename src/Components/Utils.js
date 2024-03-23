@@ -43,6 +43,7 @@ export function checkDateStatus(value) {
     } else {
         formattedDate = format(dateObj, 'dd-MM-yyyy');
         formattedDateHora = format(dateObj, 'HH:mm');
+        dateClass = '';
     }
 
     // Retorna um objeto com os dados formatados e a classe

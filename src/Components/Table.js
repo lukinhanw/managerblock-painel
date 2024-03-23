@@ -2,10 +2,31 @@ import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 
 function Table({ columns, data, length = 10, showFilter = true, showMenu = true }) {
+
+    // Adicione este estado no início do componente Table
+    const [filter, setFilter] = React.useState("");
+    const getValidityStatus = (row) => {
+        const now = new Date();
+        const validade = new Date(row.data_validade);
+        if (row.status === "bloqueado") return "Bloqueados";
+        if (row.tipo === "teste") return "Testes";
+        if (validade < now) return "Expirados";
+        return "Ativos";
+    };
+
+    // Filtrar os dados baseados no filtro selecionado antes de passá-los para useTable
+    const filteredData = React.useMemo(() => {
+        if (!filter || filter === "") {
+            return data;
+        } else {
+            return data.filter(row => getValidityStatus(row) === filter);
+        }
+    }, [data, filter]);
+
     const props = useTable(
         {
             columns,
-            data,
+            data: filteredData,
             initialState: { pageSize: length }
 
         },
@@ -13,6 +34,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
         usePagination,
 
     );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -50,7 +72,25 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                         ))}
                     </select>
                 </div>
-                <div className={`col-md-4 offset-md-5 ${showFilter ? '' : 'd-none'}`}>
+                <div className={`col-md-3 ${showMenu ? '' : 'd-none'}`}>
+                    <span className="col-md-3 position-relative float-end">
+                        {/* <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i> */}
+                    </span>
+                    <div className="mb-3">
+                        <select
+                            value={filter}
+                            onChange={e => setFilter(e.target.value)}
+                            className="form-select exibir_table mb-1 ps-4"
+                        >
+                            <option value="">Todos</option>
+                            <option value="Ativos">Ativos</option>
+                            <option value="Expirados">Expirados</option>
+                            <option value="Testes">Testes</option>
+                            <option value="Bloqueados">Bloqueados</option>
+                        </select>
+                    </div>
+                </div>
+                <div className={`col-md-6 ${showFilter ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>
@@ -66,7 +106,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                                     <tr {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map((column) => {
                                             return column.hideHeader === false ? null : (
-                                                <th style={{ width: 250}} {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
+                                                <th style={{ width: 250 }} {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
                                                     <span className="inline-flex items-center">
                                                         {column.render("Header")}
                                                     </span>

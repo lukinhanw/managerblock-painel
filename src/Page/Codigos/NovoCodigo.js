@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 // import InputMask from 'react-input-mask';
 import Api from "../../Api";
 import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { IMaskInput } from 'react-imask';
 
 const NovoCodigo = () => {
 
@@ -19,7 +20,7 @@ const NovoCodigo = () => {
         register,
         handleSubmit,
         reset,
-        // setValue,
+        control,
         formState: { errors }
     } = useForm();
 
@@ -36,13 +37,15 @@ const NovoCodigo = () => {
             await Api.post('novo-codigo', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-    
+
             setModalData({ usuario: dados.codigo, senha: dados.senha_liberacao });
             setStatus({
                 success: true,
                 message: "Código criado com sucesso."
             });
-            window.scrollTo(0, 0);
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 1000);
             setShowModalAdd(true);
             reset();
         } catch (error) {
@@ -50,7 +53,7 @@ const NovoCodigo = () => {
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao criar código";
             setStatus({ success: false, message: errorMessage });
         }
-    };    
+    };
 
     return (
         <main className="page-content">
@@ -80,7 +83,7 @@ const NovoCodigo = () => {
 
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Nome Completo *
+                                        Nome Completo*
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" {...register("nome", { required: true })} />
@@ -97,7 +100,7 @@ const NovoCodigo = () => {
                                         {errors.codigo && <small>Código de liberação é obrigatório.</small>}
                                     </div>
                                 </div>
-                                
+
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         Senha de Liberação *
@@ -117,27 +120,39 @@ const NovoCodigo = () => {
                                     </div>
                                 </div>
                                 <div className="row mb-3">
-                                    <label className="col-sm-4 col-form-label">
-                                        WhatsApp
-                                    </label>
+                                    <label className="col-sm-4 col-form-label">WhatsApp*</label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
-                                        {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
+                                        <Controller
+                                            name="whatsapp"
+                                            control={control}
+                                            rules={{ required: true }}
+                                            render={({ field }) => (
+                                                <IMaskInput
+                                                    {...field}
+                                                    mask="(00) 00000-0000"
+                                                    placeholder="(XX) XXXXX-XXXX"
+                                                    unmask={true} // Decide se os valores devem incluir a máscara ou não
+                                                    onAccept={(value, mask) => field.onChange(value)} // Garante que o valor seja atualizado corretamente
+                                                    className={`form-control ${errors.whatsapp ? 'is-invalid' : ''}`}
+                                                />
+                                            )}
+                                        />
+                                        {errors.whatsapp && <small>WhatsApp é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Quantidade de Créditos * 
+                                        Créditos *
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" defaultValue="1" {...register("creditos", { required: true })} type="number" />
-                                        {errors.creditos && <small>Quantidade de créditos é obrigatória.</small>}
+                                        {errors.creditos && <small>Créditos é obrigatória.</small>}
                                     </div>
                                 </div>
                                 <hr />
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Selecione o Servidor *
+                                        Selecione o Servidor*
                                     </label>
                                     <div className="col-sm-8">
                                         <select className="form-control" {...register("servidor", { required: true })}>

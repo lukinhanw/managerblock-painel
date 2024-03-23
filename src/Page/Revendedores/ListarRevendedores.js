@@ -155,7 +155,7 @@ const ListarRevendedores = () => {
                         Header: "WhatsApp",
                         accessor: (row) => row.whatsapp || "-",
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`http://wa.me/${original.id}`} target="_blank">
+                            <Link to={`http://wa.me/${value.replace(/\D/g, '')}`} target="_blank">
                                 {value || "-"}
                             </Link>
                         ),
