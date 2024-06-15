@@ -124,7 +124,7 @@ const EditarRevendedor = () => {
                 message: "Revendedor editado com sucesso."
             });
             window.scrollTo(0, 0);
-            
+
         } catch (error) {
             console.error('Erro ao editar revendedor:', error);
             // Define uma mensagem de erro baseada na resposta ou no erro genérico
@@ -197,6 +197,19 @@ const EditarRevendedor = () => {
                                     <div className="col-sm-8">
                                         <input className="form-control" type='number' {...register("whatsapp")} defaultValue={initialData.whatsapp} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Renovações Autenticada *
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <select className="form-control" {...register("renovacoes_autenticada", { required: true })} defaultValue={initialData.renovacoes_autenticada}>
+                                            <option value="sim">Sim</option>
+                                            <option value="nao">Não</option>
+                                        </select>
+                                        {errors.renovacoes_autenticada && <small>Renovações autenticada é obrigatória.</small>}
                                     </div>
                                 </div>
 

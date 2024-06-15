@@ -51,6 +51,7 @@ function AuthenticatedRoutes() {
 			<Route path="/logs-creditos" element={<LogCreditos />} />
 			<Route path="/logs-acoes" element={<LogAcoes />} />
 			<Route path="/ajustes" element={<Ajustes />} />
+			<Route path="/token" element={<Ajustes />} />
 			<Route path="/perfil" element={<Perfil />} /> 
 		</Routes>
 	);

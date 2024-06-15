@@ -1,21 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { differenceInDays, format, parseISO } from 'date-fns';
 
 import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Spinner } from 'react-bootstrap';
+import { checkDateStatus } from '../../Components/Utils';
 
 
 const ListarCodigos = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })
-    const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
+    const { idUsuario, token, renovacoes_autenticada } = JSON.parse(localStorage.getItem("user_token"))
 
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [showModalBlock, setShowModalBlock] = useState(false);
     const [showModalUnblock, setShowModalUnblock] = useState(false);
     const [showModalRenew, setShowModalRenew] = useState(false);
+    const [showModalRenewAuthenticated, setShowModalRenewAuthenticated] = useState(false);
+    const [showModalPagamentos, setShowModalPagamentos] = useState(false);
+
+    const [selectedPlan, setSelectedPlan] = useState({ plano: '', valor: '' });
+    const [paymentLink, setPaymentLink] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [qrCodeImageUrl, setQrCodeImageUrl] = useState('');
+    const [pixCopiaCola, setPixCopiaCola] = useState('');
+
+    const handleSubmitRenewToken = () => {
+        setShowModalPagamentos(true)
+        setShowModalRenewAuthenticated(false)
+    };
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        alert('Texto copiado para o clipboard!');
+    };
+
+    const sendToWhatsApp = () => {
+        const message = `Aqui está o link para pagamento do plano ${selectedPlan.plano}: ${paymentLink}`;
+        const whatsappUrl = `https://wa.me/${modalData.whatsapp}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    };
 
     const [modalData, setModalData] = useState({});
 
@@ -141,33 +165,7 @@ const ListarCodigos = () => {
                         ),
                         accessor: row => row.data_validade || '-',
                         Cell: ({ cell: { value }, row: { original } }) => {
-                            let formattedDate = value;
-                            let formattedDateHora = '';
-                            let dateClass = '';
-
-                            if (value !== '-') {
-                                const currentDate = new Date();
-                                const dateObj = parseISO(value);
-                                const daysDifference = differenceInDays(dateObj, currentDate);
-
-                                if (daysDifference <= 0) {
-                                    formattedDate = "Expirado";
-                                    dateClass = "text-danger";
-                                } else if (daysDifference <= 3) {
-                                    dateClass = "text-danger";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                } else if (daysDifference <= 7) {
-                                    dateClass = "text-warning";
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                } else {
-                                    formattedDate = format(dateObj, 'dd-MM-yyyy');
-                                    formattedDateHora = format(dateObj, 'HH:ii');
-                                }
-
-                            }
-
+                            const { formattedDate, formattedDateHora, dateClass } = checkDateStatus(value);
                             return (
                                 <div className={`d-flex justify-content-center text-center align-items-center`}>
                                     <Link className={dateClass} to={`/editar-codigo/${original.id}`}>{formattedDate}<br /><span className="fs-7">{formattedDateHora}</span></Link>
@@ -211,7 +209,7 @@ const ListarCodigos = () => {
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token, username: original.codigo, whatsapp: original.whatsapp }); renovacoes_autenticada === "sim" ? setShowModalRenewAuthenticated(true) : setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -239,7 +237,7 @@ const ListarCodigos = () => {
                 ]
             }
         ],
-        [token]
+        [token, renovacoes_autenticada]
     );
 
     const [data, setData] = useState([]);
@@ -254,6 +252,28 @@ const ListarCodigos = () => {
         }
         fetchData();
     }, [status, idUsuario]);
+
+    const gerarLinkPagamento = async (plano, valor) => {
+        setLoading(true);
+        try {
+            const response = await Api.post('/gerar-link-pagamento', { plano, valor });
+            if (response.data.success) {
+                setQrCodeImageUrl(response.data.qrCodeImageUrl);
+                setPixCopiaCola(response.data.pixCopiaCola);
+            } else {
+                console.error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGenerateLink = (plano, valor) => {
+        setSelectedPlan({ plano, valor });
+        gerarLinkPagamento(plano, valor);
+    };
 
     return (
         <>
@@ -356,6 +376,98 @@ const ListarCodigos = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {/* Modal de Renew Autenticada */}
+            <Modal centered show={showModalRenewAuthenticated} onHide={() => setShowModalRenewAuthenticated(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Renovar código por um mês</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Para renovar o código <b>{modalData.nome}</b> , gere um link de pagamento.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant="primary"
+                        onClick={handleSubmitRenewToken}
+                    >
+                        Gerar Link
+                    </Button>
+                    <Button variant="secondary" onClick={() => setShowModalRenewAuthenticated(false)}>
+                        Cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal de Pagamentos */}
+            <Modal centered show={showModalPagamentos} onHide={() => setShowModalPagamentos(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Gerar pagamento</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Gerar link de pagamento para: <b>{modalData.nome}</b></p>
+                    {loading ? (
+                        <div className="d-flex justify-content-center">
+                            <Spinner animation="border" />
+                        </div>
+                    ) : qrCodeImageUrl && pixCopiaCola ? (
+                        <div className="text-center">
+                            <p>QR Code para pagamento:</p>
+                            <img src={qrCodeImageUrl} className='img-fluid' width="250" alt="QR Code" />
+                            <p className="mt-3">PIX Copia e Cola:</p>
+                            <textarea className="form-control" readOnly value={pixCopiaCola} rows="3"></textarea>
+                            <div className="mt-3">
+                                <Button variant="primary" onClick={() => copyToClipboard(pixCopiaCola)}>Copiar PIX Copia e Cola</Button>
+                                <Button variant="success" onClick={sendToWhatsApp} className="ms-2">Enviar via WhatsApp</Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="row">
+                            <div className="col-12 col-md-6">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">1 mês</h5>
+                                        <p className="card-text">Valor: R$ 10,00</p>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 mês', 10)}>Gerar link</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">3 meses</h5>
+                                        <p className="card-text">Valor: R$ 25,00</p>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('3 meses', 25)}>Gerar link</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">6 meses</h5>
+                                        <p className="card-text">Valor: R$ 50,00</p>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('6 meses', 50)}>Gerar link</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">1 ano</h5>
+                                        <p className="card-text">Valor: R$ 100,00</p>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 ano', 100)}>Gerar link</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModalPagamentos(false)}>
+                        Fechar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        
 
         </>
     );

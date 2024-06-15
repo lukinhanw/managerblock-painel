@@ -27,9 +27,10 @@ export function checkDateStatus(value) {
         if (daysDifference === 0 && isBefore(currentDate, dateObj)) {
             formattedDate = format(dateObj, 'dd-MM-yyyy');
             formattedDateHora = format(dateObj, 'HH:mm');
-            dateClass = "text-warning"; // Pode ajustar a classe conforme a necessidade
+            dateClass = "text-danger"; // Pode ajustar a classe conforme a necessidade
         } else {
             formattedDate = "Expirado";
+            formattedDateHora = format(dateObj, 'dd-MM-yyyy') + ' ' + format(dateObj, 'HH:mm');
             dateClass = "text-danger";
         }
     } else if (daysDifference <= 3) {

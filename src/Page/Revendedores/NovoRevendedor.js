@@ -170,6 +170,20 @@ const NovoRevendedor = () => {
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>
+
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Renovações Autenticada *
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <select className="form-control" {...register("renovacoes_autenticada", { required: true })}>
+                                            <option value="nao">Não</option>
+                                            <option value="sim">Sim</option>
+                                        </select>
+                                        {errors.renovacoes_autenticada && <small>Renovações autenticada é obrigatória.</small>}
+                                    </div>
+                                </div>
+
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
                                         Quantidade de Créditos *

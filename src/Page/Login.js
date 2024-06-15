@@ -48,14 +48,13 @@ const Login = () => {
             const response = await Api.put('login', JSON.stringify({ ...dados, token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
-            console.log(response);
 
             setStatus({
                 success: true,
                 message: "Credenciais aceitas, fazendo login..."
             });
 
-            signin({ nome: response.data[0].nome, idUsuario: response.data[0].id, token: token }, true);
+            signin({ nome: response.data[0].nome, idUsuario: response.data[0].id, renovacoes_autenticada:response.data[0].renovacoes_autenticada, token: token }, true);
             navigate("/");
 
         } catch (error) {
