@@ -6,7 +6,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { checkDateStatus } from '../../Components/Utils';
 
 
-const ListarRenovacao = () => {
+const ListarPagamentos = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
@@ -338,4 +338,4 @@ const ListarRenovacao = () => {
     );
 }
 
-export default ListarRenovacao;
+export default ListarPagamentos;

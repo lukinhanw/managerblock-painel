@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { checkDateStatus } from '../../Components/Utils';
+import TableSimples from '../../Components/TableSimples';
 
 
 const ListarCodigos = () => {
@@ -18,9 +19,9 @@ const ListarCodigos = () => {
     const [showModalRenew, setShowModalRenew] = useState(false);
     const [showModalRenewAuthenticated, setShowModalRenewAuthenticated] = useState(false);
     const [showModalPagamentos, setShowModalPagamentos] = useState(false);
+    const [showModalRenovacoes, setShowModalRenovacoes] = useState(false);
 
     const [selectedPlan, setSelectedPlan] = useState({ plano: '', valor: '' });
-    const [paymentLink, setPaymentLink] = useState('');
     const [loading, setLoading] = useState(false);
     const [qrCodeImageUrl, setQrCodeImageUrl] = useState('');
     const [pixCopiaCola, setPixCopiaCola] = useState('');
@@ -36,8 +37,8 @@ const ListarCodigos = () => {
     };
 
     const sendToWhatsApp = () => {
-        const message = `Aqui está o link para pagamento do plano ${selectedPlan.plano}: ${paymentLink}`;
-        const whatsappUrl = `https://wa.me/${modalData.whatsapp}?text=${encodeURIComponent(message)}`;
+        const message = `Aqui está o link para realizar o pagamento do plano ${selectedPlan.plano}: `;
+        const whatsappUrl = `https://wa.me/55${modalData.whatsapp}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
 
@@ -229,6 +230,13 @@ const ListarCodigos = () => {
                                             delete
                                         </span>
                                     </Link>
+                                    {renovacoes_autenticada === "sim" &&
+                                        <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token, username: original.codigo, whatsapp: original.whatsapp }); setShowModalRenovacoes(true); }}>
+                                            <span className="material-symbols-outlined">
+                                                receipt_long
+                                            </span>
+                                        </Link>
+                                    }
 
                                 </div>
                             )
@@ -253,10 +261,10 @@ const ListarCodigos = () => {
         fetchData();
     }, [status, idUsuario]);
 
-    const gerarLinkPagamento = async (plano, valor) => {
+    const gerarLinkPagamento = async (plano, valor, token, id_codigo) => {
         setLoading(true);
         try {
-            const response = await Api.post('/gerar-link-pagamento', { plano, valor });
+            const response = await Api.post('/gerar-link-pagamento', { plano, valor, token, id_codigo });
             if (response.data.success) {
                 setQrCodeImageUrl(response.data.qrCodeImageUrl);
                 setPixCopiaCola(response.data.pixCopiaCola);
@@ -270,9 +278,16 @@ const ListarCodigos = () => {
         }
     };
 
-    const handleGenerateLink = (plano, valor) => {
+    const handleModalClose = () => {
+        setShowModalPagamentos(false);
+        setQrCodeImageUrl('');
+        setPixCopiaCola('');
+        setLoading(false);
+    };
+
+    const handleGenerateLink = (plano, valor, token, id_codigo) => {
         setSelectedPlan({ plano, valor });
-        gerarLinkPagamento(plano, valor);
+        gerarLinkPagamento(plano, valor, token, id_codigo);
     };
 
     return (
@@ -399,7 +414,7 @@ const ListarCodigos = () => {
             </Modal>
 
             {/* Modal de Pagamentos */}
-            <Modal centered show={showModalPagamentos} onHide={() => setShowModalPagamentos(false)}>
+            <Modal centered show={showModalPagamentos} onHide={() => handleModalClose()}>
                 <Modal.Header closeButton>
                     <Modal.Title>Gerar pagamento</Modal.Title>
                 </Modal.Header>
@@ -427,7 +442,7 @@ const ListarCodigos = () => {
                                     <div className="card-body">
                                         <h5 className="card-title">1 mês</h5>
                                         <p className="card-text">Valor: R$ 10,00</p>
-                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 mês', 10)}>Gerar link</button>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 mês', 10, token, modalData.id)}>Gerar link</button>
                                     </div>
                                 </div>
                             </div>
@@ -436,7 +451,7 @@ const ListarCodigos = () => {
                                     <div className="card-body">
                                         <h5 className="card-title">3 meses</h5>
                                         <p className="card-text">Valor: R$ 25,00</p>
-                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('3 meses', 25)}>Gerar link</button>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('3 meses', 25, token, modalData.id)}>Gerar link</button>
                                     </div>
                                 </div>
                             </div>
@@ -445,7 +460,7 @@ const ListarCodigos = () => {
                                     <div className="card-body">
                                         <h5 className="card-title">6 meses</h5>
                                         <p className="card-text">Valor: R$ 50,00</p>
-                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('6 meses', 50)}>Gerar link</button>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('6 meses', 50, token, modalData.id)}>Gerar link</button>
                                     </div>
                                 </div>
                             </div>
@@ -454,7 +469,7 @@ const ListarCodigos = () => {
                                     <div className="card-body">
                                         <h5 className="card-title">1 ano</h5>
                                         <p className="card-text">Valor: R$ 100,00</p>
-                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 ano', 100)}>Gerar link</button>
+                                        <button className="btn btn-primary" onClick={() => handleGenerateLink('1 ano', 100, token, modalData.id)}>Gerar link</button>
                                     </div>
                                 </div>
                             </div>
@@ -462,12 +477,57 @@ const ListarCodigos = () => {
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModalPagamentos(false)}>
+                    <Button variant="secondary" onClick={() => handleModalClose()}>
                         Fechar
                     </Button>
                 </Modal.Footer>
             </Modal>
-        
+
+            {/* Modal de Renovações */}
+            <Modal centered show={showModalRenovacoes} onHide={() => setShowModalRenovacoes(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Renovações</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Renovações do código: <b>{modalData.nome}</b></p>
+                    <TableSimples columns={[
+                        {
+                            Header: '',
+                            isVisible: false,
+                            hideHeader: false,
+                            id: 'id',
+                            columns: [
+                                {
+                                    Header: "Data",
+                                    accessor: row => row.data || '-',
+                                    Cell: ({ cell: { value } }) => (
+                                        <span>{value}</span>
+                                    ),
+                                },
+                                {
+                                    Header: "Valor",
+                                    accessor: row => row.valor || '-',
+                                    Cell: ({ cell: { value } }) => (
+                                        <span>{value}</span>
+                                    ),
+                                },
+                                {
+                                    Header: "Status",
+                                    accessor: row => row.status || '-',
+                                    Cell: ({ cell: { value } }) => (
+                                        <span>{value === 1 ? 'Pago' : 'Pendente'}</span>
+                                    ),
+                                },
+                            ]
+                        }
+                    ]} data={[]} lenght={10} />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModalRenovacoes(false)}>
+                        Fechar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
         </>
     );

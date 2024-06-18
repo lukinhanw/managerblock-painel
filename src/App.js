@@ -20,16 +20,17 @@ import LogAcoes from './Page/Log/LogAcoes';
 import Ajustes from './Page/Ajustes/Ajustes';
 import Login from './Page/Login';
 import Perfil from './Page/Perfil/Perfil';
+import NovoUsuario from './Page/Usuarios/NovoUsuario';
+import EditarUsuario from './Page/Usuarios/EditarUsuario';
+import ListarUsuarios from './Page/Usuarios/ListarUsuarios';
+import NovoUsuarioTeste from './Page/Testes/NovoUsuarioTeste';
+import Qrcode from './Page/Qrcode';
 
 // Auth
 import useAuth from "./Auth/hook_useAuth";
 import Api from './Api';
 import { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
-import NovoUsuario from './Page/Usuarios/NovoUsuario';
-import EditarUsuario from './Page/Usuarios/EditarUsuario';
-import ListarUsuarios from './Page/Usuarios/ListarUsuarios';
-import NovoUsuarioTeste from './Page/Testes/NovoUsuarioTeste';
 
 function AuthenticatedRoutes() {
 	return (
@@ -53,6 +54,7 @@ function AuthenticatedRoutes() {
 			<Route path="/ajustes" element={<Ajustes />} />
 			<Route path="/token" element={<Ajustes />} />
 			<Route path="/perfil" element={<Perfil />} /> 
+			<Route path="/pagamento/:code" element={<Qrcode />} />
 		</Routes>
 	);
 }
@@ -133,6 +135,7 @@ function App() {
 				) : (
 					<Routes>
 						<Route path="*" element={<Login />} />
+						<Route path="/pagamento/:code" element={<Qrcode />} />
 					</Routes>
 				)}
 			</Router>

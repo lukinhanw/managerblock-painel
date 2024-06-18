@@ -129,34 +129,33 @@ const EditarCodigo = () => {
                                     </div>
                                 </div>
 
-                                {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
-                                    <div className="row mb-3">
-                                        <label className="col-sm-4 col-form-label">
-                                            Data de validade
-                                        </label>
-                                        <div className="col-sm-8">
-                                            <Controller
-                                                name="data_validade"
-                                                control={control}
-                                                defaultValue={initialData ? new Date(initialData.data_validade) : new Date()}
-                                                render={({ field }) => (
-                                                    <ReactDatePicker
-                                                        className="form-control"
-                                                        dateFormat="dd/MM/yyyy HH:mm"
-                                                        showTimeSelect
-                                                        timeFormat="HH:mm"
-                                                        timeIntervals={15}
-                                                        onChange={(date) => field.onChange(date)}
-                                                        selected={field.value}
-                                                        locale="pt-BR"
-                                                        readOnly={dadosInfoUser && dadosInfoUser.id_dono !== 0}
-                                                    />
-                                                )}
-                                            />
-                                            {errors.data_validade && <small>Data de validade é obrigatório.</small>}
-                                        </div>
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Data de validade
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <Controller
+                                            name="data_validade"
+                                            control={control}
+                                            defaultValue={initialData ? new Date(initialData.data_validade) : new Date()}
+                                            render={({ field }) => (
+                                                <ReactDatePicker
+                                                    className="form-control"
+                                                    dateFormat="dd/MM/yyyy HH:mm"
+                                                    showTimeSelect
+                                                    timeFormat="HH:mm"
+                                                    timeIntervals={15}
+                                                    onChange={(date) => field.onChange(date)}
+                                                    selected={field.value}
+                                                    locale="pt-BR"
+                                                    readOnly={dadosInfoUser && dadosInfoUser.id_dono !== 0}
+                                                />
+                                            )}
+                                        />
+                                        {errors.data_validade && <small>Data de validade é obrigatório.</small>}
                                     </div>
-                                )}
+                                </div>
+
 
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
