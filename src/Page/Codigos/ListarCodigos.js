@@ -16,8 +16,25 @@ const ListarCodigos = () => {
     const [showModalBlock, setShowModalBlock] = useState(false);
     const [showModalUnblock, setShowModalUnblock] = useState(false);
     const [showModalRenew, setShowModalRenew] = useState(false);
+    const [showModalRenewAuth, setShowModalRenewAuth] = useState(false);
+    const [selectedRenewalOption, setSelectedRenewalOption] = useState('');
+    const [planos, setPlanos] = useState([]);
 
     const [modalData, setModalData] = useState({});
+
+    // Obter planos
+    useEffect(() => {
+        const obterPlanos = async () => {
+            try {
+                const response = await Api.get('obter-planos');
+                setPlanos(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        obterPlanos();
+    }, []);
 
     const renovarCodigo = async (id, token) => {
         try {
@@ -97,6 +114,33 @@ const ListarCodigos = () => {
                 message: "Ocorreu um erro ao desbloquear o usuário. Tente novamente mais tarde.",
             });
         }
+    };
+
+    const renovarCodigoAuth = async (id, token) => {
+        setSelectedRenewalOption(false);
+        try {
+            const response = await Api.post(`gerar-link-pagamento/${id}`, JSON.stringify({ token, plano: selectedRenewalOption }), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            setShowModalRenewAuth(false);
+            //Resetar o formulario após enviar e der sucesso
+            if (response.data.success === true) {
+                setStatus(response.data);
+            }
+            // Redirecionar para o link de pagamento em um novo aba
+            window.open(response.data.data.links[1].href, '_blank');
+
+        } catch (error) {
+            console.log(error.response.data.message);
+            // Mostra uma mensagem de erro genérica ao usuário
+            setStatus({
+                success: false,
+                message: error.response.data.message,
+            });
+
+        }
+
     };
 
     const columns = React.useMemo(
@@ -211,7 +255,7 @@ const ListarCodigos = () => {
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); setShowModalRenew(true); }} >
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); original.renovacoes_autenticada === "sim" ? setShowModalRenewAuth(true) : setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -352,6 +396,37 @@ const ListarCodigos = () => {
                         Confirmar
                     </Button>
                     <Button variant="secondary" onClick={() => setShowModalRenew(false)}>
+                        Cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal de Renew Autenticadas */}
+            <Modal centered show={showModalRenewAuth} onHide={() => { setShowModalRenewAuth(false); setSelectedRenewalOption(false) }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Renovar código {modalData.nome}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Dropdown com 3 opcoes */}
+                    <select
+                        className="form-select"
+                        aria-label="Selecione Renovacoes Autenticadas"
+                        value={selectedRenewalOption}
+                        onChange={(e) => setSelectedRenewalOption(e.target.value)}
+                    >
+                        <option value="">Selecione uma opção</option>
+                        {planos.map(plano => (
+                            <option key={plano.id} value={plano.id}>
+                                Renovar por {plano.meses} mês(es) - R$ {plano.valor},00
+                            </option>
+                        ))}
+                    </select>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" disabled={!selectedRenewalOption} onClick={() => renovarCodigoAuth(modalData.id, modalData.token)}>
+                        Gerar link de pagamento
+                    </Button>
+                    <Button variant="secondary" onClick={() => { setShowModalRenewAuth(false); setSelectedRenewalOption(false) }}>
                         Cancelar
                     </Button>
                 </Modal.Footer>
