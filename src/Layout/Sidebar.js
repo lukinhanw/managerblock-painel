@@ -57,7 +57,7 @@ const Sidebar = () => {
             setInfo(response.data[0]);
         });
     }, []);
-    
+
     return (
         <>
             <aside className="sidebar-wrapper">
@@ -141,7 +141,7 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
-                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}> 
+                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -247,6 +247,39 @@ const Sidebar = () => {
                                                     </ul>
                                                 )}
                                             </li>
+
+                                            <li className="menu-label mt-3 mb-2">
+                                                Pagamentos
+                                            </li>
+
+                                            <li>
+                                                <Link to="#" onClick={() => toggleMenu("logs")}>
+                                                    <div className="parent-icon">
+                                                    <span className="material-symbols-outlined"> paid </span>
+                                                    </div>
+                                                    <div className="menu-title d-flex justify-content-between" >
+                                                        Pagamentos
+                                                        <span className="arrow-icon material-symbols-outlined">
+                                                            {menuOpen.pagamento ? 'expand_less' : 'expand_more'}
+                                                        </span>
+                                                    </div>
+                                                </Link>
+
+                                                {menuOpen.logs && (
+                                                    <ul className="ms-3">
+                                                        <li>
+                                                            <Link to="/logs-pagamentos">
+                                                                <span className="material-symbols-outlined">
+                                                                    subdirectory_arrow_right
+                                                                </span>
+                                                                Consultar Pagamentos
+                                                            </Link>
+                                                        </li>
+                                                    </ul>
+                                                )}
+                                            </li>
+
+
 
 
                                             <li className="menu-label mt-3 mb-2">

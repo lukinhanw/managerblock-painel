@@ -168,7 +168,7 @@ const EditarCodigo = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" type='number' {...register("whatsapp")} defaultValue={initialData.whatsapp} />
+                                        <input className="form-control" type='number' {...register("whatsapp", { required: true })} placeholder='DD+Telefone' defaultValue={initialData.whatsapp} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>

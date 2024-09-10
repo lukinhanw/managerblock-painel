@@ -67,7 +67,7 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                                     <tr {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map((column) => {
                                             return column.hideHeader === false ? null : (
-                                                <th style={{ width: 250}} {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
+                                                <th {...column.getHeaderProps()} scope="col" className="px-6 py-3 text-xs font-bold text-gray-50 uppercase ">
                                                     <span className="inline-flex items-center">
                                                         {column.render("Header")}
                                                     </span>

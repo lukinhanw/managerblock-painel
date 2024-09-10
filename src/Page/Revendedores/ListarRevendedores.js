@@ -100,6 +100,10 @@ const ListarRevendedores = () => {
                 id: "id",
                 columns: [
                     {
+                        Header: "#",
+                        accessor: row => row.id || '-',
+                    },
+                    {
                         Header: "Nome Completo",
                         accessor: (row) => row.nome || "-",
                         Cell: ({ cell: { value }, row: { original } }) => (

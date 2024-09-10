@@ -36,7 +36,7 @@ const NovoCodigo = () => {
             await Api.post('novo-codigo', JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
             });
-    
+
             setModalData({ usuario: dados.codigo, senha: dados.senha_liberacao });
             setStatus({
                 success: true,
@@ -49,7 +49,7 @@ const NovoCodigo = () => {
             const errorMessage = error.response?.data?.error || "Erro desconhecido ao criar código";
             setStatus({ success: false, message: errorMessage });
         }
-    };    
+    };
 
     return (
         <main className="page-content">
@@ -118,13 +118,13 @@ const NovoCodigo = () => {
                                         WhatsApp
                                     </label>
                                     <div className="col-sm-8">
-                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp")} />
+                                        <input className="form-control" type='number' placeholder='DD+Telefone' {...register("whatsapp", { required: true })} />
                                         {errors.whatsapp && <small>Whatsapp é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mb-3">
                                     <label className="col-sm-4 col-form-label">
-                                        Quantidade de Créditos * 
+                                        Quantidade de Créditos *
                                     </label>
                                     <div className="col-sm-8">
                                         <input className="form-control" defaultValue="1" {...register("creditos", { required: true })} type="number" />

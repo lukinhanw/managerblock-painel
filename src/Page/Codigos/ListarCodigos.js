@@ -123,11 +123,13 @@ const ListarCodigos = () => {
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            setShowModalRenewAuth(false);
             //Resetar o formulario após enviar e der sucesso
             if (response.data.success === true) {
                 setStatus(response.data);
             }
+
+            setShowModalRenewAuth(false);
+
             // Redirecionar para o link de pagamento em um novo aba
             window.open(response.data.data.links[1].href, '_blank');
 
@@ -138,6 +140,7 @@ const ListarCodigos = () => {
                 success: false,
                 message: error.response.data.message,
             });
+            setShowModalRenewAuth(false);
 
         }
 
@@ -151,6 +154,10 @@ const ListarCodigos = () => {
                 hideHeader: false,
                 id: 'id',
                 columns: [
+                    {
+                        Header: "#",
+                        accessor: row => row.id || '-',
+                    },
                     {
                         Header: "Código",
                         accessor: row => `${row.nome || '-'} ${row.codigo || ''} ${row.whatsapp || ''}`,
