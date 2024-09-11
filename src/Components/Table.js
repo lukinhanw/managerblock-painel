@@ -2,18 +2,17 @@ import React from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data, length = 10, showFilter = true, showMenu = true }) {
+function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true }) {
     const props = useTable(
         {
             columns,
             data,
             initialState: { pageSize: length }
-
         },
         useGlobalFilter,
         usePagination,
-
     );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -25,16 +24,14 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
         canPreviousPage,
         canNextPage,
         pageOptions,
-        // pageCount,
-        // gotoPage,
         nextPage,
         previousPage,
         setPageSize,
         state: { pageIndex, pageSize, globalFilter }
     } = props;
+
     React.useEffect(() => {
     }, [globalFilter]);
-
 
     return (
         <>
@@ -76,7 +73,6 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                                         })}
                                     </tr>
                                 ))}
-
                             </thead>
                             <tbody {...getTableBodyProps()}>
                                 {page.map((row, i) => {
@@ -93,7 +89,6 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                                         </tr>
                                     );
                                 })}
-
                             </tbody>
                         </table>
                     </div>
@@ -123,10 +118,8 @@ function Table({ columns, data, length = 10, showFilter = true, showMenu = true 
                     </ul>
                 </nav>
             </div>
-
         </>
     );
 }
-
 
 export default Table;

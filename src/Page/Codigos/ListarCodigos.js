@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { differenceInDays, format, parseISO } from 'date-fns';
-
 import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
-
 
 const ListarCodigos = () => {
 
@@ -17,9 +15,9 @@ const ListarCodigos = () => {
     const [showModalUnblock, setShowModalUnblock] = useState(false);
     const [showModalRenew, setShowModalRenew] = useState(false);
     const [showModalRenewAuth, setShowModalRenewAuth] = useState(false);
+    const [pixData, setPixData] = useState({ copiaECola: '', qrCodeBase64: '' });
     const [selectedRenewalOption, setSelectedRenewalOption] = useState('');
     const [planos, setPlanos] = useState([]);
-
     const [modalData, setModalData] = useState({});
 
     // Obter planos
@@ -38,23 +36,44 @@ const ListarCodigos = () => {
 
     const renovarCodigo = async (id, token) => {
         try {
-
             const response = await Api.put(`renovar-codigo/${id}`, JSON.stringify({ token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
 
             setShowModalRenew(false);
-            //Resetar o formulario após enviar e der sucesso
             if (response.data.success === true) {
                 setStatus(response.data);
             }
         } catch (error) {
             console.log(error);
-            // Mostra uma mensagem de erro genérica ao usuário
             setStatus({
                 success: false,
                 message: error.response.data.error,
             });
+        }
+    };
+
+    const renovarCodigoAuth = async (id, token) => {
+        setSelectedRenewalOption(false);
+        try {
+            const response = await Api.post(`gerar-pix-pagamento/${id}`, JSON.stringify({ token, plano: selectedRenewalOption }), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            setPixData({
+                copiaECola: response.data.pix_copia_e_cola,
+                qrCodeBase64: response.data.pix_qr_code_url
+            });
+            setStatus(response.data.message);
+            setShowModalRenewAuth(false);
+
+        } catch (error) {
+            console.log(error.response.data.message);
+            setStatus({
+                success: false,
+                message: error.response.data.message,
+            });
+            setShowModalRenewAuth(false);
         }
     };
 
@@ -64,13 +83,11 @@ const ListarCodigos = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setShowModalDelete(false);
-            //Resetar o formulario após enviar e der sucesso
             if (response.data.success === true) {
                 setStatus(response.data);
             }
         } catch (error) {
             console.log(error);
-            // Mostra uma mensagem de erro genérica ao usuário
             setStatus({
                 success: false,
                 message: "Ocorreu um erro ao apagar o código. Tente novamente mais tarde.",
@@ -99,7 +116,6 @@ const ListarCodigos = () => {
 
     const desbloquearCodigo = async (id) => {
         try {
-
             const response = await Api.put(`desbloquear-codigo/${id}`, JSON.stringify({ token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -114,36 +130,6 @@ const ListarCodigos = () => {
                 message: "Ocorreu um erro ao desbloquear o usuário. Tente novamente mais tarde.",
             });
         }
-    };
-
-    const renovarCodigoAuth = async (id, token) => {
-        setSelectedRenewalOption(false);
-        try {
-            const response = await Api.post(`gerar-link-pagamento/${id}`, JSON.stringify({ token, plano: selectedRenewalOption }), {
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            //Resetar o formulario após enviar e der sucesso
-            if (response.data.success === true) {
-                setStatus(response.data);
-            }
-
-            setShowModalRenewAuth(false);
-
-            // Redirecionar para o link de pagamento em um novo aba
-            window.open(response.data.data.links[1].href, '_blank');
-
-        } catch (error) {
-            console.log(error.response.data.message);
-            // Mostra uma mensagem de erro genérica ao usuário
-            setStatus({
-                success: false,
-                message: error.response.data.message,
-            });
-            setShowModalRenewAuth(false);
-
-        }
-
     };
 
     const columns = React.useMemo(
@@ -306,6 +292,9 @@ const ListarCodigos = () => {
         fetchData();
     }, [status, idUsuario]);
 
+    console.log(pixData);
+
+
     return (
         <>
             <main className="page-content">
@@ -329,12 +318,33 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                <Table columns={columns} data={data} lenght={10} />
+                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} />}
                             </div>
                         </div>
                     </div>
                 </div>
             </main>
+
+            {/* Modal de pagamento via Pix */}
+            <Modal centered show={pixData.copiaECola !== ''} onHide={() => setPixData({ copiaECola: '', qrCodeBase64: '' })}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Pagamento via Pix</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div>
+                        <p>Código Pix Copia e Cola:</p>
+                        <input type="text" className="form-control" value={pixData.copiaECola} readOnly />
+                    </div>
+                    <div className="mt-4 text-center">
+                        <img className='w-50' src={`data:image/png;base64,${pixData.qrCodeBase64}`} alt="QR Code Pix" />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setPixData({ copiaECola: '', qrCodeBase64: '' })}>
+                        Fechar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
             {/* Modal de deletar */}
             <Modal centered show={showModalDelete} onHide={() => setShowModalDelete(false)}>
@@ -424,7 +434,7 @@ const ListarCodigos = () => {
                         <option value="">Selecione uma opção</option>
                         {planos.map(plano => (
                             <option key={plano.id} value={plano.id}>
-                                Renovar por {plano.meses} mês(es) - R$ {plano.valor},00
+                                Renovar por {plano.meses} mês(es) - R$ {Number(plano.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </option>
                         ))}
                     </select>
@@ -438,7 +448,6 @@ const ListarCodigos = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
         </>
     );
 }
