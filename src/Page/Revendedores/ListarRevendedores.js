@@ -121,6 +121,7 @@ const ListarRevendedores = () => {
                                         </span>
                                     }
                                     <div className='ms-1 lable-table bg-warning-subtle text-warning rounded border border-warning-subtle font-text2 fw-bold'>Créditos: {original.creditos}</div>
+                                    {original.renovacoes_automaticas ? <div className='ms-1 lable-table bg-secondary-subtle text-secondary rounded border border-secondary-subtle font-text2 fw-bold'><span className="material-symbols-outlined">paid</span></div> : ''}
                                 </div>
                             </Link>
 

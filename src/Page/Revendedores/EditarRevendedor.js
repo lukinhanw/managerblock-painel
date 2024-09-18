@@ -6,7 +6,6 @@ import Select from 'react-select'
 
 const EditarRevendedor = () => {
 
-
     const customStyles = {
         control: (base, state) => ({
             ...base,
@@ -38,14 +37,13 @@ const EditarRevendedor = () => {
 
     };
 
-
     const { id } = useParams();
     const [status, setStatus] = useState({ success: false, message: '' });
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
     const [initialData, setInitialData] = useState(null);
     const navigate = useNavigate();
 
-
+    //Dados do usuario logado
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
@@ -54,7 +52,7 @@ const EditarRevendedor = () => {
 
     }, [idUsuario]);
 
-
+    //Dados dos revendedores
     const [dataRevendedores, setDataRevendedores] = useState([]);
     useEffect(() => {
         async function fetchData() {
@@ -74,6 +72,8 @@ const EditarRevendedor = () => {
         filteredRevendedores = dataRevendedores.filter(revendedor => revendedor.id !== initialData.id);
     }
 
+
+    //Formulario
     const {
         register,
         control,
@@ -83,6 +83,7 @@ const EditarRevendedor = () => {
     } = useForm();
 
 
+    //Busca os dados do revendedor
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -105,6 +106,7 @@ const EditarRevendedor = () => {
         }
     }, [initialData, setValue]);  // Apenas para definir o valor
 
+    //Funcao para editar o revendedor
     const onSubmit = async (dados) => {
         try {
             // Prepara os dados para envio
@@ -134,6 +136,7 @@ const EditarRevendedor = () => {
         }
     };
 
+    //Carrega os dados do revendedor
     if (!initialData) {
         return <div>Carregando...</div>;
     }
@@ -242,6 +245,31 @@ const EditarRevendedor = () => {
                                     <div className="col-sm-8">
                                         <input type="password" className="form-control" {...register("senha_painel")} defaultValue={initialData.senha_painel} />
                                         {errors.senha_painel && <small>Usuario do Painel é obrigatório.</small>}
+                                    </div>
+                                </div>
+                                <hr />
+                                <div className="row mb-3">
+                                    <label className="col-sm-4 col-form-label">
+                                        Renovações Automáticas?
+                                    </label>
+                                    <div className="col-sm-8">
+                                        <Controller
+                                            name="renovacoes_automaticas"
+                                            control={control}
+                                            defaultValue={initialData.renovacoes_automaticas}
+                                            render={({ field }) => (
+                                                <div className="form-check form-switch">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        {...field}
+                                                        checked={field.value}
+                                                        onChange={(e) => field.onChange(e.target.checked)}
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                        {errors.renovacoes_automaticas && <small>Renovações Automáticas é obrigatório.</small>}
                                     </div>
                                 </div>
                                 <div className="row mt-5">

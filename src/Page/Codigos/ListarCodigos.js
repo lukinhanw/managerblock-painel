@@ -248,7 +248,7 @@ const ListarCodigos = () => {
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); original.renovacoes_autenticada === "sim" ? setShowModalRenewAuth(true) : setShowModalRenew(true); }} >
+                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); original.renovacoes_automaticas ? setShowModalRenewAuth(true) : setShowModalRenew(true); }} >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -418,7 +418,7 @@ const ListarCodigos = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal de Renew Autenticadas */}
+            {/* Modal de Renew Automáticas */}
             <Modal centered show={showModalRenewAuth} onHide={() => { setShowModalRenewAuth(false); setSelectedRenewalOption(false) }}>
                 <Modal.Header closeButton>
                     <Modal.Title>Renovar código {modalData.nome}</Modal.Title>
@@ -427,7 +427,7 @@ const ListarCodigos = () => {
                     {/* Dropdown com 3 opcoes */}
                     <select
                         className="form-select"
-                        aria-label="Selecione Renovacoes Autenticadas"
+                        aria-label="Selecione Renovacoes Automáticas"
                         value={selectedRenewalOption}
                         onChange={(e) => setSelectedRenewalOption(e.target.value)}
                     >
