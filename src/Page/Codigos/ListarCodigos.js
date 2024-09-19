@@ -4,12 +4,12 @@ import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
+import './ListarCodigos.css';
 
 const ListarCodigos = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' })
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
-
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [showModalBlock, setShowModalBlock] = useState(false);
     const [showModalUnblock, setShowModalUnblock] = useState(false);
@@ -19,6 +19,8 @@ const ListarCodigos = () => {
     const [selectedRenewalOption, setSelectedRenewalOption] = useState('');
     const [planos, setPlanos] = useState([]);
     const [modalData, setModalData] = useState({});
+    const [showModalNotification, setShowModalNotification] = useState(false);
+    const [notificationData, setNotificationData] = useState({});
 
     // Obter planos
     useEffect(() => {
@@ -132,6 +134,29 @@ const ListarCodigos = () => {
         }
     };
 
+    const handleNotificationClick = (codigo) => {
+        setNotificationData(codigo);
+        setShowModalNotification(true);
+    };
+
+    const handleNotificationConfirm = async (confirmed) => {
+        try {
+            const response = await Api.put(`atualizar-renovado-origem/${notificationData.id}`, JSON.stringify({ confirmado: confirmed, token: token }), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.data.success === true) {
+                setStatus(response.data);
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus({
+                success: false,
+                message: "Ocorreu um erro ao atualizar a renovação. Tente novamente mais tarde.",
+            });
+        }
+        setShowModalNotification(false);
+    };
+
     const columns = React.useMemo(
         () => [
             {
@@ -148,8 +173,13 @@ const ListarCodigos = () => {
                         Header: "Código",
                         accessor: row => `${row.nome || '-'} ${row.codigo || ''} ${row.whatsapp || ''}`,
                         Cell: ({ cell: { value }, row: { original } }) => (
-                            <Link to={`/editar-codigo/${original.id}`} className="d-flex flex-column align-items-start">
-                                <span className="font-weight-bold text-white">{original.codigo}</span>
+                            <div to={`/editar-codigo/${original.id}`} className="fs-6 d-flex flex-column align-items-start">
+                                <div className="d-flex align-items-center">
+                                    {original.renovado_origem === 1 && (
+                                        <i className="bi bi-bell-fill text-warning me-2 blink cursor-pointer" onClick={() => handleNotificationClick(original)}></i>
+                                    )}
+                                    <span className="font-weight-bold text-white">{original.codigo}</span>
+                                </div>
 
                                 <div className="d-flex align-items-center me-1">
                                     {original.status === 0 ?
@@ -164,7 +194,7 @@ const ListarCodigos = () => {
                                     <div className='badge bg-dark text-max-15 ms-1'>{original.nome}</div>
                                     <div className='badge bg-secondary ms-1'><Link className='text-dark' to={`http://wa.me/55${original.whatsapp}`} target='_blank'><i className="bi bi-whatsapp"></i> {original.whatsapp || '-'}</Link></div>
                                 </div>
-                            </Link>
+                            </div>
                         ),
                     },
                     {
@@ -445,6 +475,24 @@ const ListarCodigos = () => {
                     </Button>
                     <Button variant="secondary" onClick={() => { setShowModalRenewAuth(false); setSelectedRenewalOption(false) }}>
                         Cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal de Notificação */}
+            <Modal centered show={showModalNotification} onHide={() => setShowModalNotification(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmação de Renovação</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Você fez a renovação do usuário <b>{notificationData.nome}</b> no servidor de origem?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => handleNotificationConfirm(true)}>
+                        Sim
+                    </Button>
+                    <Button variant="secondary" onClick={() => setShowModalNotification(false)}>
+                        Não
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -207,46 +207,45 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
-                                            <li>
-                                                <Link to="#" onClick={() => toggleMenu("revendedores")}>
-                                                    <div className="parent-icon">
-                                                        <span className="material-symbols-outlined">
-                                                            group
-                                                        </span>
-                                                    </div>
-                                                    <div className="menu-title d-flex justify-content-between" >
-                                                        Revendedores
-                                                        <span className="arrow-icon material-symbols-outlined">
-                                                            {menuOpen.codigo ? 'expand_less' : 'expand_more'}
-                                                        </span>
-                                                    </div>
-                                                </Link>
+                                            {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
+                                                <li>
+                                                    <Link to="#" onClick={() => toggleMenu("revendedores")}>
+                                                        <div className="parent-icon">
+                                                            <span className="material-symbols-outlined">
+                                                                group
+                                                            </span>
+                                                        </div>
+                                                        <div className="menu-title d-flex justify-content-between" >
+                                                            Revendedores
+                                                            <span className="arrow-icon material-symbols-outlined">
+                                                                {menuOpen.revendedores ? 'expand_less' : 'expand_more'}
+                                                            </span>
+                                                        </div>
+                                                    </Link>
 
-                                                {menuOpen.revendedores && (
-                                                    <ul className="ms-3">
-                                                        {dadosInfoUser && dadosInfoUser.id_dono === 0 ?
-                                                            (
-                                                                <li>
-                                                                    <Link to="/novo-revendedor">
-                                                                        <span className="material-symbols-outlined">
-                                                                            subdirectory_arrow_right
-                                                                        </span>
-                                                                        Novo Revendedor
-                                                                    </Link>
-                                                                </li>
-                                                            ) : ''
-                                                        }
-                                                        <li>
-                                                            <Link to="/listar-revendedores">
-                                                                <span className="material-symbols-outlined">
-                                                                    subdirectory_arrow_right
-                                                                </span>
-                                                                Listar Revendedores
-                                                            </Link>
-                                                        </li>
-                                                    </ul>
-                                                )}
-                                            </li>
+                                                    {menuOpen.revendedores && (
+                                                        <ul className="ms-3">
+                                                            <li>
+                                                                <Link to="/novo-revendedor">
+                                                                    <span className="material-symbols-outlined">
+                                                                        subdirectory_arrow_right
+                                                                    </span>
+                                                                    Novo Revendedor
+                                                                </Link>
+                                                            </li>
+
+                                                            <li>
+                                                                <Link to="/listar-revendedores">
+                                                                    <span className="material-symbols-outlined">
+                                                                        subdirectory_arrow_right
+                                                                    </span>
+                                                                    Listar Revendedores
+                                                                </Link>
+                                                            </li>
+                                                        </ul>
+                                                    )}
+                                                </li>
+                                            )}
 
                                             <li className="menu-label mt-3 mb-2">
                                                 Pagamentos
@@ -255,7 +254,7 @@ const Sidebar = () => {
                                             <li>
                                                 <Link to="#" onClick={() => toggleMenu("logs")}>
                                                     <div className="parent-icon">
-                                                    <span className="material-symbols-outlined"> paid </span>
+                                                        <span className="material-symbols-outlined"> paid </span>
                                                     </div>
                                                     <div className="menu-title d-flex justify-content-between" >
                                                         Pagamentos

@@ -125,7 +125,6 @@ const ListarRevendedores = () => {
                                 </div>
                             </Link>
 
-
                         ),
                     },
                     {
