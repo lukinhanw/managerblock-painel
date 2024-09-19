@@ -52,7 +52,7 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
                     </select>
                 </div>
                 {showPendingFilter && (
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                         <select 
                             className="form-select mb-1 ps-4" 
                             value={pendingFilter} 
@@ -63,7 +63,7 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
                         </select>
                     </div>
                 )}
-                <div className={`col-md-4 ${showPendingFilter ? '' : 'offset-md-5'} ${showFilter ? '' : 'd-none'}`}>
+                <div className={`col-md-4 ${showPendingFilter ? 'offset-md-3' : 'offset-md-5'} ${showFilter ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>

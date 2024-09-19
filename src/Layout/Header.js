@@ -36,7 +36,7 @@ const Header = () => {
                     </Link>
                 )}
                 <Tooltip id="notification-tooltip" place="bottom" variant="light" content="Você tem códigos para serem renovados no servidor de origem" />
-                <button className="btn-toggle-menu" onClick={handleButtonClick}>
+                <button className="btn-toggle-menu me-1" onClick={handleButtonClick}>
                     <span className="material-symbols-outlined">menu</span>
                 </button>
                 <div className="product-tags">

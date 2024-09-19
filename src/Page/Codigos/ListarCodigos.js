@@ -21,6 +21,7 @@ const ListarCodigos = () => {
     const [modalData, setModalData] = useState({});
     const [showModalNotification, setShowModalNotification] = useState(false);
     const [notificationData, setNotificationData] = useState({});
+    const [atualizarData, setAtualizarData] = useState(false);
 
     // Obter planos
     useEffect(() => {
@@ -43,6 +44,7 @@ const ListarCodigos = () => {
             });
 
             setShowModalRenew(false);
+            setAtualizarData(prev => !prev);
             if (response.data.success === true) {
                 setStatus(response.data);
             }
@@ -69,6 +71,7 @@ const ListarCodigos = () => {
             setStatus(response.data.message);
             setShowModalRenewAuth(false);
             verificarNotificacoes();
+            setAtualizarData(prev => !prev);
 
         } catch (error) {
             console.log(error.response.data.message);
@@ -88,6 +91,7 @@ const ListarCodigos = () => {
             setShowModalDelete(false);
             if (response.data.success === true) {
                 setStatus(response.data);
+                setAtualizarData(prev => !prev);
             }
         } catch (error) {
             console.log(error);
@@ -107,6 +111,7 @@ const ListarCodigos = () => {
             setShowModalBlock(false);
             if (response.data.success === true) {
                 setStatus(response.data);
+                setAtualizarData(prev => !prev);
             }
         } catch (error) {
             console.error(error);
@@ -125,6 +130,7 @@ const ListarCodigos = () => {
             setShowModalUnblock(false);
             if (response.data.success === true) {
                 setStatus(response.data);
+                setAtualizarData(prev => !prev);
             }
         } catch (error) {
             console.error(error);
@@ -145,9 +151,11 @@ const ListarCodigos = () => {
             const response = await Api.put(`atualizar-renovado-origem/${notificationData.id}`, JSON.stringify({ confirmado: confirmed, token: token }), {
                 headers: { 'Content-Type': 'application/json' }
             });
-            if (response.data.success === true) {
-                setStatus(response.data);
-            }
+
+            setStatus(response.data);
+            setAtualizarData(prev => !prev);
+            verificarNotificacoes(); // Atualiza o estado das notificações no header
+
         } catch (error) {
             console.error(error);
             setStatus({
@@ -156,8 +164,21 @@ const ListarCodigos = () => {
             });
         }
         setShowModalNotification(false);
-        verificarNotificacoes(); // Atualiza o estado das notificações no header
     };
+
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await Api.get(`listar-codigos/${idUsuario}`);
+                setData(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+
+        }
+        fetchData();
+    }, [atualizarData, idUsuario]);
 
     const columns = React.useMemo(
         () => [
@@ -285,7 +306,8 @@ const ListarCodigos = () => {
                                             calendar_add_on
                                         </span>
                                     </Link>
-                                    <Link className="fs-4 me-3"
+                                    <Link
+                                        className="fs-4 me-3"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             original.status === 1 ? setShowModalUnblock(true) : setShowModalBlock(true)
@@ -310,20 +332,6 @@ const ListarCodigos = () => {
         ],
         [token]
     );
-
-    const [data, setData] = useState([]);
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await Api.get(`listar-codigos/${idUsuario}`);
-                setData(response.data);
-                console.log(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        fetchData();
-    }, [status, idUsuario]);
 
     return (
         <>
