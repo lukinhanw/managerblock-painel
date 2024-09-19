@@ -6,10 +6,13 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.scss';
 import App from './App';
 import { AuthProvider } from './Auth/Auth';
+import { NotificationProvider } from './NotificationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <AuthProvider>
-        <App />
+        <NotificationProvider>
+            <App />
+        </NotificationProvider>
     </AuthProvider>
 );

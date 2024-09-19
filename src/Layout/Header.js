@@ -1,51 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { NotificationContext } from "../NotificationContext";
 import Api from '../Api';
-import '../Page/Codigos/ListarCodigos.css';
+import { Tooltip } from 'react-tooltip'
+import { Link } from 'react-router-dom';
 
 const Header = () => {
-
+    const { temNotificacao } = useContext(NotificationContext);
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     const [isActive, setIsActive] = useState(false);
-    const [temNotificacao, setTemNotificacao] = useState(false); // novo estado para notificações
     const { idUsuario } = JSON.parse(localStorage.getItem("user_token"));
 
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
             setDadosInfoUser(response.data);
         });
-
-        // Verificar notificações pendentes
-        Api.get(`verificar-codigo-pendente/${idUsuario}`).then((response) => {
-            if (response.data.codigo_pendente) {
-                setTemNotificacao(true);
-            }
-        });
     }, [idUsuario]);
 
-    const handleButtonClick = () => { // nova função para lidar com o click
+    const handleButtonClick = () => {
         setIsActive(!isActive);
-
         const btnToggle = document.querySelector('.btn-toggle-menu');
         const sidebar = document.querySelector('.sidebar-wrapper');
-
         btnToggle.addEventListener('click', function () {
             sidebar.classList.toggle('active');
         });
-
-    }
+    };
 
     return (
         <header className={`top-header ${isActive ? 'active' : ''}`}>
             <nav className="navbar navbar-expand justify-content-end">
                 {temNotificacao && (
-                    <div className="notification-icon">
-                        <span className="material-symbols-outlined text-warning blink fs-4">notifications</span>
-                    </div>
+                    <Link to="/listar-codigos">
+                        <div className="cursor-pointer" data-tooltip-id="notification-tooltip">
+                            <span className="material-symbols-outlined text-warning blink fs-4">notifications</span>
+                        </div>
+                    </Link>
                 )}
-                <button
-                    className="btn-toggle-menu"
-                    onClick={handleButtonClick}
-                >
+                <Tooltip id="notification-tooltip" place="bottom" variant="light" content="Você tem códigos para serem renovados no servidor de origem" />
+                <button className="btn-toggle-menu" onClick={handleButtonClick}>
                     <span className="material-symbols-outlined">menu</span>
                 </button>
                 <div className="product-tags">
@@ -54,6 +45,6 @@ const Header = () => {
             </nav>
         </header>
     );
-}
+};
 
 export default Header;

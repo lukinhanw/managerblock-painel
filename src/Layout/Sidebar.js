@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Api from "../Api";
 import useAuth from "../Auth/hook_useAuth";
+import { NotificationContext } from "../NotificationContext";
 
 const Sidebar = () => {
 
     const navigate = useNavigate();
     const { signout } = useAuth();
-
+    const { temNotificacao } = useContext(NotificationContext);
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
     const [menuOpen, setMenuOpen] = useState({});  // Adicionado aqui
-
 
     const { idUsuario } = JSON.parse(localStorage.getItem("user_token"))
     useEffect(() => {
@@ -116,6 +116,7 @@ const Sidebar = () => {
                                                         <span className="arrow-icon material-symbols-outlined">
                                                             {menuOpen.codigo ? 'expand_less' : 'expand_more'}
                                                         </span>
+                                                        {temNotificacao && <span className="text-warning ms-2 blink">•</span>}
                                                     </div>
                                                 </Link>
 
@@ -134,7 +135,7 @@ const Sidebar = () => {
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
-                                                                Listar Códigos
+                                                                Listar Códigos {temNotificacao && <span className="text-warning ms-2 blink">•</span>}
                                                             </Link>
                                                         </li>
                                                     </ul>

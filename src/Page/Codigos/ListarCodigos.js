@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
-import './ListarCodigos.css';
+import { NotificationContext } from '../../NotificationContext';
 
 const ListarCodigos = () => {
-
+    const { verificarNotificacoes } = useContext(NotificationContext);
     const [status, setStatus] = useState({ success: false, message: '' })
     const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
     const [showModalDelete, setShowModalDelete] = useState(false);
@@ -68,6 +68,7 @@ const ListarCodigos = () => {
             });
             setStatus(response.data.message);
             setShowModalRenewAuth(false);
+            verificarNotificacoes();
 
         } catch (error) {
             console.log(error.response.data.message);
@@ -155,6 +156,7 @@ const ListarCodigos = () => {
             });
         }
         setShowModalNotification(false);
+        verificarNotificacoes(); // Atualiza o estado das notificações no header
     };
 
     const columns = React.useMemo(
