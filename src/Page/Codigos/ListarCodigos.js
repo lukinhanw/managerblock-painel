@@ -317,15 +317,13 @@ const ListarCodigos = () => {
             try {
                 const response = await Api.get(`listar-codigos/${idUsuario}`);
                 setData(response.data);
+                console.log(response.data);
             } catch (error) {
                 console.error(error);
             }
         }
         fetchData();
     }, [status, idUsuario]);
-
-    console.log(pixData);
-
 
     return (
         <>
@@ -350,7 +348,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} />}
+                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={true} />}
                             </div>
                         </div>
                     </div>

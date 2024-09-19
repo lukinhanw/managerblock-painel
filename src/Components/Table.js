@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true }) {
+function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false }) {
+    const [pendingFilter, setPendingFilter] = useState('todos');
+    
+    const filteredData = useMemo(() => {
+        return pendingFilter === 'pendentes' ? data.filter(item => item.renovado_origem === 1) : data;
+    }, [data, pendingFilter]);
+
     const props = useTable(
         {
             columns,
-            data,
+            data: filteredData,
             initialState: { pageSize: length }
         },
         useGlobalFilter,
@@ -37,9 +43,6 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
         <>
             <div className="row">
                 <div className={`col-md-3 ${showMenu ? '' : 'd-none'}`}>
-                    <span className="col-md-3 position-relative float-end">
-                        {/* <i className="bi bi-arrow-down-short position-absolute" style={{ right: '14px', top: '7px', fontSize: '1.6rem', color: '#adb5c9' }}></i> */}
-                    </span>
                     <select className="form-select exibir_table mb-1 ps-4" value={pageSize} onChange={e => { setPageSize(Number(e.target.value)) }}>
                         {[5, 10, 30, 40, 50].map(pageSize => (
                             <option key={pageSize} value={pageSize}>
@@ -48,7 +51,19 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
                         ))}
                     </select>
                 </div>
-                <div className={`col-md-4 offset-md-5 ${showFilter ? '' : 'd-none'}`}>
+                {showPendingFilter && (
+                    <div className="col-md-3">
+                        <select 
+                            className="form-select mb-1 ps-4" 
+                            value={pendingFilter} 
+                            onChange={e => setPendingFilter(e.target.value)}
+                        >
+                            <option value="todos">Todos</option>
+                            <option value="pendentes">Pendentes</option>
+                        </select>
+                    </div>
+                )}
+                <div className={`col-md-4 ${showPendingFilter ? '' : 'offset-md-5'} ${showFilter ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>
