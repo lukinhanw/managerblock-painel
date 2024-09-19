@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Api from "../Api";
 import useAuth from "../Auth/hook_useAuth";
 import { NotificationContext } from "../NotificationContext";
 
 const Sidebar = () => {
-
     const navigate = useNavigate();
+    const location = useLocation(); // Importação do hook useLocation
     const { signout } = useAuth();
     const { temNotificacao } = useContext(NotificationContext);
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
-    const [menuOpen, setMenuOpen] = useState({});  // Adicionado aqui
+    const [menuOpen, setMenuOpen] = useState({});
+    const { idUsuario } = JSON.parse(localStorage.getItem("user_token"));
 
-    const { idUsuario } = JSON.parse(localStorage.getItem("user_token"))
     useEffect(() => {
         Api.get(`info/${idUsuario}`).then((response) => {
             setDadosInfoUser(response.data);
@@ -32,15 +32,48 @@ const Sidebar = () => {
         fetchData();
     }, []);
 
+    // Função para alternar o menu, garantindo que apenas um esteja aberto por vez
     const toggleMenu = (name) => {
-        setMenuOpen({
-            ...menuOpen,
-            [name]: !menuOpen[name]
+        setMenuOpen((prevState) => {
+            if (prevState[name]) {
+                return {};
+            } else {
+                return { [name]: true };
+            }
         });
     };
 
-    const [isActive, setIsActive] = useState(false)
-    const handleButtonClick = () => { // nova função para lidar com o click
+    // Função para mapear rotas aos nomes dos menus
+    const routeToMenuName = (path) => {
+        if (path.startsWith('/novo-codigo') || path.startsWith('/listar-codigos')) {
+            return 'codigo';
+        } else if (path.startsWith('/novo-usuario') || path.startsWith('/listar-usuarios')) {
+            return 'usuario';
+        } else if (path.startsWith('/novo-teste')) {
+            return 'teste';
+        } else if (path.startsWith('/novo-revendedor') || path.startsWith('/listar-revendedores')) {
+            return 'revendedores';
+        } else if (path.startsWith('/logs-pagamentos')) {
+            return 'pagamento';
+        } else if (path.startsWith('/logs-creditos') || path.startsWith('/logs-acoes')) {
+            return 'logs';
+        } else {
+            return null;
+        }
+    };
+
+    // useEffect para atualizar o menu aberto com base na rota atual
+    useEffect(() => {
+        const menuName = routeToMenuName(location.pathname);
+        if (menuName) {
+            setMenuOpen({ [menuName]: true });
+        } else {
+            setMenuOpen({});
+        }
+    }, [location.pathname]);
+
+    const [isActive, setIsActive] = useState(false);
+    const handleButtonClick = () => {
         setIsActive(!isActive);
 
         const sidebar = document.querySelector('.sidebar-wrapper');
@@ -49,7 +82,7 @@ const Sidebar = () => {
         sidebarClose.addEventListener('click', function () {
             sidebar.classList.toggle('active');
         });
-    }
+    };
 
     const [info, setInfo] = useState(null);
     useEffect(() => {
@@ -104,6 +137,7 @@ const Sidebar = () => {
                                                 Usuários e Revendedores
                                             </li>
 
+                                            {/* Menu Código */}
                                             <li className={data.exibir_codigos === '0' ? 'd-none' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("codigo")}>
                                                     <div className="parent-icon">
@@ -142,6 +176,7 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
+                                            {/* Menu Usuários */}
                                             <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
@@ -179,6 +214,7 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
+                                            {/* Menu Teste */}
                                             <li>
                                                 <Link to="#" onClick={() => toggleMenu("teste")}>
                                                     <div className="parent-icon">
@@ -189,7 +225,7 @@ const Sidebar = () => {
                                                     <div className="menu-title d-flex justify-content-between" >
                                                         Teste
                                                         <span className="arrow-icon material-symbols-outlined">
-                                                            {menuOpen.codigo ? 'expand_less' : 'expand_more'}
+                                                            {menuOpen.teste ? 'expand_less' : 'expand_more'}
                                                         </span>
                                                     </div>
                                                 </Link>
@@ -208,6 +244,7 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
+                                            {/* Menu Revendedores */}
                                             {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
                                                 <li>
                                                     <Link to="#" onClick={() => toggleMenu("revendedores")}>
@@ -252,8 +289,9 @@ const Sidebar = () => {
                                                 Pagamentos
                                             </li>
 
+                                            {/* Menu Pagamentos */}
                                             <li>
-                                                <Link to="#" onClick={() => toggleMenu("logs")}>
+                                                <Link to="#" onClick={() => toggleMenu("pagamento")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined"> paid </span>
                                                     </div>
@@ -265,7 +303,7 @@ const Sidebar = () => {
                                                     </div>
                                                 </Link>
 
-                                                {menuOpen.logs && (
+                                                {menuOpen.pagamento && (
                                                     <ul className="ms-3">
                                                         <li>
                                                             <Link to="/logs-pagamentos">
@@ -279,13 +317,11 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
-
-
-
                                             <li className="menu-label mt-3 mb-2">
                                                 Relatórios
                                             </li>
 
+                                            {/* Menu Logs do Sistema */}
                                             <li>
                                                 <Link to="#" onClick={() => toggleMenu("logs")}>
                                                     <div className="parent-icon">
@@ -296,7 +332,7 @@ const Sidebar = () => {
                                                     <div className="menu-title d-flex justify-content-between" >
                                                         Logs do Sistema
                                                         <span className="arrow-icon material-symbols-outlined">
-                                                            {menuOpen.codigo ? 'expand_less' : 'expand_more'}
+                                                            {menuOpen.logs ? 'expand_less' : 'expand_more'}
                                                         </span>
                                                     </div>
                                                 </Link>
@@ -323,27 +359,25 @@ const Sidebar = () => {
                                                 )}
                                             </li>
 
-
                                             <li className="menu-label mt-3 mb-2">
                                                 Configurações
                                             </li>
 
-                                            {dadosInfoUser && dadosInfoUser.id_dono === 0 ?
-                                                (
-                                                    <li>
-                                                        <Link to="/ajustes">
-                                                            <div className="parent-icon">
-                                                                <span className="material-symbols-outlined">
-                                                                    settings
-                                                                </span>
-                                                            </div>
-                                                            <div className="menu-title">
-                                                                Ajustes
-                                                            </div>
-                                                        </Link>
-                                                    </li>
-                                                ) : ''
-                                            }
+                                            {/* Menu Ajustes */}
+                                            {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
+                                                <li>
+                                                    <Link to="/ajustes">
+                                                        <div className="parent-icon">
+                                                            <span className="material-symbols-outlined">
+                                                                settings
+                                                            </span>
+                                                        </div>
+                                                        <div className="menu-title">
+                                                            Ajustes
+                                                        </div>
+                                                    </Link>
+                                                </li>
+                                            )}
 
                                             <li>
                                                 <Link onClick={() => [signout(), navigate("/")]}>
