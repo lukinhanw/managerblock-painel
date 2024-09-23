@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Api from '../Api';
-import useAuth from '../Auth/hook_useAuth';
-import { useNavigate } from 'react-router-dom';
+import useAuth from '../Context/hook_useAuth';
 import { v4 as uuidv4 } from 'uuid';
 
 const Login = () => {
 
     const [status, setStatus] = useState({ success: false, message: '' });
     const { signin } = useAuth();
-    const navigate = useNavigate();
 
     const [info, setInfo] = useState(null);
     useEffect(() => {
@@ -56,7 +54,6 @@ const Login = () => {
             });
 
             signin({ nome: response.data[0].nome, idUsuario: response.data[0].id, token: token }, true);
-            navigate("/");
 
         } catch (error) {
             if (error.response) {

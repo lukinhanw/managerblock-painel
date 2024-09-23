@@ -26,7 +26,7 @@ import ListarUsuarios from './Page/Usuarios/ListarUsuarios';
 import Pagamentos from './Page/Pagamentos/Pagamentos';
 
 // Auth
-import useAuth from "./Auth/hook_useAuth";
+import useAuth from './Context/hook_useAuth';
 import Api from './Api';
 import { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';

@@ -5,14 +5,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.scss';
 import App from './App';
-import { AuthProvider } from './Auth/Auth';
-import { NotificationProvider } from './NotificationContext';
+
+// Contextos
+import { AuthProvider } from './Context/Auth';
+import { NotificationProvider } from './Context/NotificationContext';
+import { InfoUserProvider } from './Context/infoUserContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <AuthProvider>
+    <InfoUserProvider>
         <NotificationProvider>
-            <App />
+            <AuthProvider>
+                <App />
+            </AuthProvider>
         </NotificationProvider>
-    </AuthProvider>
+    </InfoUserProvider>
 );

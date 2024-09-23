@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Api from "../Api";
-import useAuth from "../Auth/hook_useAuth";
-import { NotificationContext } from "../NotificationContext";
+import useAuth from "../Context/hook_useAuth";
+import { NotificationContext } from "../Context/NotificationContext";
 
 const Sidebar = () => {
     const navigate = useNavigate();
@@ -195,7 +195,7 @@ const Sidebar = () => {
                                                 {menuOpen.usuario && (
                                                     <ul className="ms-3">
                                                         <li>
-                                                            <Link to="/novo-usuario">
+                                                            <Link to="/novo-usuario" f>
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
@@ -285,37 +285,40 @@ const Sidebar = () => {
                                                 </li>
                                             )}
 
-                                            <li className="menu-label mt-3 mb-2">
-                                                Pagamentos
-                                            </li>
-
                                             {/* Menu Pagamentos */}
-                                            <li>
-                                                <Link to="#" onClick={() => toggleMenu("pagamento")}>
-                                                    <div className="parent-icon">
-                                                        <span className="material-symbols-outlined"> paid </span>
-                                                    </div>
-                                                    <div className="menu-title d-flex justify-content-between" >
+                                            {(dadosInfoUser && (dadosInfoUser.renovacoes_automaticas === 1 || dadosInfoUser.id_dono === 0)) && (
+                                                <>
+                                                    <li className="menu-label mt-3 mb-2">
                                                         Pagamentos
-                                                        <span className="arrow-icon material-symbols-outlined">
-                                                            {menuOpen.pagamento ? 'expand_less' : 'expand_more'}
-                                                        </span>
-                                                    </div>
-                                                </Link>
-
-                                                {menuOpen.pagamento && (
-                                                    <ul className="ms-3">
-                                                        <li>
-                                                            <Link to="/logs-pagamentos">
-                                                                <span className="material-symbols-outlined">
-                                                                    subdirectory_arrow_right
+                                                    </li>
+                                                    <li>
+                                                        <Link to="#" onClick={() => toggleMenu("pagamento")}>
+                                                            <div className="parent-icon">
+                                                                <span className="material-symbols-outlined"> paid </span>
+                                                            </div>
+                                                            <div className="menu-title d-flex justify-content-between" >
+                                                                Pagamentos
+                                                                <span className="arrow-icon material-symbols-outlined">
+                                                                    {menuOpen.pagamento ? 'expand_less' : 'expand_more'}
                                                                 </span>
-                                                                Consultar Pagamentos
-                                                            </Link>
-                                                        </li>
-                                                    </ul>
-                                                )}
-                                            </li>
+                                                            </div>
+                                                        </Link>
+
+                                                        {menuOpen.pagamento && (
+                                                            <ul className="ms-3">
+                                                                <li>
+                                                                    <Link to="/logs-pagamentos">
+                                                                        <span className="material-symbols-outlined">
+                                                                            subdirectory_arrow_right
+                                                                        </span>
+                                                                        Consultar Pagamentos
+                                                                    </Link>
+                                                                </li>
+                                                            </ul>
+                                                        )}
+                                                    </li>
+                                                </>
+                                            )}
 
                                             <li className="menu-label mt-3 mb-2">
                                                 Relatórios

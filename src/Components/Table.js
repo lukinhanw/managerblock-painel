@@ -2,12 +2,23 @@ import React, { useMemo, useState } from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false }) {
+function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false, showPagamentosFilter = false }) {
     const [pendingFilter, setPendingFilter] = useState('todos');
-    
+    const [pagamentosFilter, setPagamentosFilter] = useState('todos');
+
     const filteredData = useMemo(() => {
-        return pendingFilter === 'pendentes' ? data.filter(item => item.renovado_origem === 1) : data;
-    }, [data, pendingFilter]);
+        let filtered = data;
+
+        if (pendingFilter === 'pendentes') {
+            filtered = filtered.filter(item => item.renovado_origem === 1);
+        }
+
+        if (pagamentosFilter !== 'todos') {
+            filtered = filtered.filter(item => item.PB_status === pagamentosFilter);
+        }
+
+        return filtered;
+    }, [data, pendingFilter, pagamentosFilter]);
 
     const props = useTable(
         {
@@ -53,9 +64,9 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
                 </div>
                 {showPendingFilter && (
                     <div className="col-md-2">
-                        <select 
-                            className="form-select mb-1 ps-4" 
-                            value={pendingFilter} 
+                        <select
+                            className="form-select mb-1 ps-4"
+                            value={pendingFilter}
                             onChange={e => setPendingFilter(e.target.value)}
                         >
                             <option value="todos">Todos</option>
@@ -63,7 +74,21 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
                         </select>
                     </div>
                 )}
-                <div className={`col-md-4 ${showPendingFilter ? 'offset-md-3' : 'offset-md-5'} ${showFilter ? '' : 'd-none'}`}>
+                {showPagamentosFilter && (
+                    <div className="col-md-2">
+                        <select
+                            className="form-select mb-1 ps-4"
+                            value={pagamentosFilter}
+                            onChange={e => setPagamentosFilter(e.target.value)}
+                        >
+                            <option value="todos">Todos</option>
+                            <option value="approved">Aprovados</option>
+                            <option value="pending">Pendentes</option>
+                            <option value="cancelled">Cancelados</option>
+                        </select>
+                    </div>
+                )}
+                <div className={`col-md-4 ${showPendingFilter || showPagamentosFilter ? 'offset-md-3' : 'offset-md-5'} ${showFilter ? '' : 'd-none'}`}>
                     <span className="col-md-3 position-relative">
                         <i className="bi bi-search position-absolute" style={{ left: 6, top: 6, fontSize: '1.1rem', color: '#adb5c9' }}></i>
                     </span>

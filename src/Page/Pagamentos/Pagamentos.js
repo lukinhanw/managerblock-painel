@@ -169,7 +169,7 @@ const Pagamentos = () => {
 								</h5>
 							</div>
 							<div className="card-body p-4">
-								{data && data.length > 0 && <Table columns={columns} data={data} />}
+								{data && data.length > 0 && <Table columns={columns} data={data} showPagamentosFilter={true} />}
 							</div>
 						</div>
 					</div>

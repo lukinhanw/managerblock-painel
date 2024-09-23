@@ -25,8 +25,6 @@ const EditarTeste = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
-
             setStatus({
                 success: false,
                 message: "Ocorreu um erro ao atualizar o cliente. Por favor, tente novamente mais tarde."

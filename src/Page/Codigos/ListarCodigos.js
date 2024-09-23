@@ -4,12 +4,14 @@ import Table from "../../Components/Table"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
-import { NotificationContext } from '../../NotificationContext';
+import { NotificationContext } from '../../Context/NotificationContext';
+import { InfoUserContext } from '../../Context/infoUserContext';
 
 const ListarCodigos = () => {
     const { verificarNotificacoes } = useContext(NotificationContext);
+    const { userInfo } = useContext(InfoUserContext);
     const [status, setStatus] = useState({ success: false, message: '' })
-    const { idUsuario, token } = JSON.parse(localStorage.getItem("user_token"))
+    const { token } = JSON.parse(localStorage.getItem("user_token"))
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [showModalBlock, setShowModalBlock] = useState(false);
     const [showModalUnblock, setShowModalUnblock] = useState(false);
@@ -22,6 +24,16 @@ const ListarCodigos = () => {
     const [showModalNotification, setShowModalNotification] = useState(false);
     const [notificationData, setNotificationData] = useState({});
     const [atualizarData, setAtualizarData] = useState(false);
+    const [filterPending, setFilterPending] = useState(false);
+
+    const idUsuario = userInfo ? userInfo.id : null;
+    const renovacoes_automaticas = userInfo ? userInfo.renovacoes_automaticas : 0;
+
+    useEffect(() => {
+        if (renovacoes_automaticas === 1) {
+            setFilterPending(true);
+        }
+    }, [renovacoes_automaticas]);
 
     // Obter planos
     useEffect(() => {
@@ -356,7 +368,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={true} />}
+                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} />}
                             </div>
                         </div>
                     </div>

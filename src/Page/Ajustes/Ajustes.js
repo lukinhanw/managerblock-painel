@@ -42,7 +42,6 @@ const Ajustes = () => {
     }
 
     const onSubmit = async (dados) => {
-        console.log(dados);
         try {
             await Api.put(`ajustes-painel`, JSON.stringify(dados), {
                 headers: { 'Content-Type': 'application/json' }
