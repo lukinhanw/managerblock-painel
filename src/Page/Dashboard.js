@@ -179,7 +179,7 @@ const Dashboard = () => {
 
     const getUsuariosNovos = useCallback(async () => {
         try {
-            const response = await Api.get(`/listar-usuarios-intervalo/${idUsuario}`);
+            const response = await Api.get(`/listar-codigos-intervalo/${idUsuario}`);
             let data = response.data;
     
             let intervalos = {
