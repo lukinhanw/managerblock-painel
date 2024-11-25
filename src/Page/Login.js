@@ -5,7 +5,7 @@ import useAuth from '../Context/hook_useAuth';
 import { v4 as uuidv4 } from 'uuid';
 import '../Components/css/Login.css';
 
-const VERSION = '2.1.0';
+const VERSION = process.env.REACT_APP_VERSION || '1.0.0';
 
 const Login = () => {
     const [status, setStatus] = useState({ success: false, message: '' });
