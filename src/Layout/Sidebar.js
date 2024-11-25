@@ -93,7 +93,7 @@ const Sidebar = () => {
             <aside className={`sidebar-wrapper ${isActive ? 'active' : ''}`}>
                 <div className="sidebar-header">
                     <div className="logo-icon" style={{ textAlign: 'center', width: '100%' }}>
-                        {info.logo && info.logo.length > 10 ? (
+                        {info && info.logo && info.logo.length > 10 ? (
                             <img src={info.logo} className="logo-img" alt="" />
                         ) : (
                             <h5 className="mb-0">{info && info.titulo_painel}</h5>

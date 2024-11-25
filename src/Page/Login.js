@@ -48,7 +48,7 @@ const Login = () => {
         try {
             const token = uuidv4();
             const response = await Api.put('login', { ...dados, token });
-            
+
             setTimeout(() => {
                 if (response.data && response.data.length > 0) {
                     setStatus({
@@ -81,7 +81,7 @@ const Login = () => {
                 <div className="gradient-sphere"></div>
                 <div className="gradient-sphere secondary"></div>
             </div>
-            
+
             <div className="login-card">
                 <div className="login-card-body">
                     {info && (
@@ -146,9 +146,9 @@ const Login = () => {
                             )}
                         </div>
 
-                        <button 
-                            type="submit" 
-                            className="login-button mt-2" 
+                        <button
+                            type="submit"
+                            className="login-button mt-2"
                             disabled={loading || !isValid}
                         >
                             {loading ? (
