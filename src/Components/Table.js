@@ -2,12 +2,16 @@ import React, { useMemo, useState } from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false, showPagamentosFilter = false }) {
+function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false, showPagamentosFilter = false, serverFilter }) {
     const [pendingFilter, setPendingFilter] = useState('todos');
     const [pagamentosFilter, setPagamentosFilter] = useState('todos');
 
     const filteredData = useMemo(() => {
         let filtered = data;
+
+        if (serverFilter) {
+            filtered = filtered.filter(item => item.servidor === serverFilter);
+        }
 
         if (pendingFilter === 'pendentes') {
             filtered = filtered.filter(item => item.renovado_origem === 1);
@@ -18,7 +22,7 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
         }
 
         return filtered;
-    }, [data, pendingFilter, pagamentosFilter]);
+    }, [data, pendingFilter, pagamentosFilter, serverFilter]);
 
     const props = useTable(
         {

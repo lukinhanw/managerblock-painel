@@ -6,6 +6,7 @@ import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
 import { NotificationContext } from '../../Context/NotificationContext';
 import { InfoUserContext } from '../../Context/infoUserContext';
+import { Tooltip } from 'react-tooltip';
 
 const ListarCodigos = () => {
     const { verificarNotificacoes } = useContext(NotificationContext);
@@ -25,6 +26,8 @@ const ListarCodigos = () => {
     const [notificationData, setNotificationData] = useState({});
     const [atualizarData, setAtualizarData] = useState(false);
     const [filterPending, setFilterPending] = useState(false);
+    const [filterServer, setFilterServer] = useState('');
+    const [uniqueServers, setUniqueServers] = useState([]);
 
     const idUsuario = userInfo ? userInfo.id : null;
     const renovacoes_automaticas = userInfo ? userInfo.renovacoes_automaticas : 0;
@@ -192,6 +195,13 @@ const ListarCodigos = () => {
         fetchData();
     }, [atualizarData, idUsuario]);
 
+    useEffect(() => {
+        if (data && data.length > 0) {
+            const servers = [...new Set(data.map(item => item.servidor))];
+            setUniqueServers(servers);
+        }
+    }, [data]);
+
     const columns = React.useMemo(
         () => [
             {
@@ -308,12 +318,25 @@ const ListarCodigos = () => {
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Link className='fs-4 me-3' to={`/editar-codigo/${original.id}`}>
+                                    <Link 
+                                        className='fs-4 me-3' 
+                                        to={`/editar-codigo/${original.id}`}
+                                        data-tooltip-id="edit-tooltip"
+                                        data-tooltip-content="Editar código"
+                                    >
                                         <span className="material-symbols-outlined">
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id, token: token }); original.renovacoes_automaticas ? setShowModalRenewAuth(true) : setShowModalRenew(true); }} >
+                                    <Link 
+                                        className='fs-4 me-3' 
+                                        onClick={() => { 
+                                            setModalData({ nome: original.codigo, id: original.id, token: token }); 
+                                            original.renovacoes_automaticas ? setShowModalRenewAuth(true) : setShowModalRenew(true); 
+                                        }}
+                                        data-tooltip-id="renew-tooltip"
+                                        data-tooltip-content="Renovar código"
+                                    >
                                         <span className="material-symbols-outlined">
                                             calendar_add_on
                                         </span>
@@ -324,17 +347,31 @@ const ListarCodigos = () => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             original.status === 1 ? setShowModalUnblock(true) : setShowModalBlock(true)
                                         }}
+                                        data-tooltip-id="block-tooltip"
+                                        data-tooltip-content={original.status === 1 ? "Desbloquear código" : "Bloquear código"}
                                     >
                                         <span className="material-symbols-outlined">
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link className='fs-4 me-3' onClick={() => { setModalData({ nome: original.codigo, id: original.id }); setShowModalDelete(true); }}>
+                                    <Link 
+                                        className='fs-4 me-3' 
+                                        onClick={() => { 
+                                            setModalData({ nome: original.codigo, id: original.id }); 
+                                            setShowModalDelete(true); 
+                                        }}
+                                        data-tooltip-id="delete-tooltip"
+                                        data-tooltip-content="Deletar código"
+                                    >
                                         <span className="material-symbols-outlined">
                                             delete
                                         </span>
                                     </Link>
 
+                                    <Tooltip id="edit-tooltip" place="top" />
+                                    <Tooltip id="renew-tooltip" place="top" />
+                                    <Tooltip id="block-tooltip" place="top" />
+                                    <Tooltip id="delete-tooltip" place="top" />
                                 </div>
                             )
                         }
@@ -354,7 +391,21 @@ const ListarCodigos = () => {
                     <div className="col-lg-12 mx-auto">
                         <div className="card">
                             <div className="card-header px-4 py-3 bg-transparent">
-                                <h5 className="mb-0">Todos os códigos</h5>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <h5 className="mb-0">Todos os códigos</h5>
+                                    <select 
+                                        className="form-select w-auto"
+                                        value={filterServer}
+                                        onChange={(e) => setFilterServer(e.target.value)}
+                                    >
+                                        <option value="">Todos os servidores</option>
+                                        {uniqueServers.map(server => (
+                                            <option key={server} value={server}>
+                                                {server}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div className="card-body p-4">
                                 {status.message && (
@@ -368,7 +419,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} />}
+                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} serverFilter={filterServer} />}
                             </div>
                         </div>
                     </div>
