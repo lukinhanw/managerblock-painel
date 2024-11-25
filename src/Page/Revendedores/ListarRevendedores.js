@@ -3,6 +3,7 @@ import Table from "../../Components/Table";
 import { Link } from "react-router-dom";
 import Api from "../../Api";
 import { Button, Modal } from "react-bootstrap";
+import { Tooltip } from 'react-tooltip';
 
 const ListarRevendedores = () => {
     const [status, setStatus] = useState({ success: false, message: "" });
@@ -184,41 +185,60 @@ const ListarRevendedores = () => {
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Link className="fs-4 me-2" to={`/editar-revendedor/${original.id}`}>
+                                    <Link 
+                                        className="fs-4 me-2" 
+                                        to={`/editar-revendedor/${original.id}`}
+                                        data-tooltip-id="edit-tooltip"
+                                        data-tooltip-content="Editar revendedor"
+                                    >
                                         <span className="material-symbols-outlined">
                                             edit
                                         </span>
                                     </Link>
-                                    <Link className="fs-4 me-2"
+                                    <Link 
+                                        className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             setShowModalCreditos(true);
                                         }}
+                                        data-tooltip-id="credit-tooltip"
+                                        data-tooltip-content="Gerenciar créditos"
                                     >
                                         <span className="material-symbols-outlined">
                                             attach_money
                                         </span>
                                     </Link>
-                                    <Link className="fs-4 me-2"
+                                    <Link 
+                                        className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             original.status === 1 ? setShowModalUnblock(true) : setShowModalBlock(true)
                                         }}
+                                        data-tooltip-id="block-tooltip"
+                                        data-tooltip-content={original.status === 1 ? "Desbloquear revendedor" : "Bloquear revendedor"}
                                     >
                                         <span className="material-symbols-outlined">
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link className="fs-4 me-2"
+                                    <Link 
+                                        className="fs-4 me-2"
                                         onClick={() => {
                                             setModalData({ nome: original.nome, id: original.id });
                                             setShowModalDelete(true);
                                         }}
+                                        data-tooltip-id="delete-tooltip"
+                                        data-tooltip-content="Excluir revendedor"
                                     >
                                         <span className="material-symbols-outlined">
                                             delete
                                         </span>
                                     </Link>
+                                    {/* Tooltips */}
+                                    <Tooltip id="edit-tooltip" place="top" />
+                                    <Tooltip id="credit-tooltip" place="top" />
+                                    <Tooltip id="block-tooltip" place="top" />
+                                    <Tooltip id="delete-tooltip" place="top" />
                                 </div>
                             );
                         },
