@@ -120,8 +120,6 @@
 [data-bs-theme=dark] .sidebar-wrapper .metismenu a:active .parent-icon {
 	color: #ffffff;
     text-decoration: none;
-    background: #2d5768;
-    border-color: #577683;
 	transition: ease-out .3s;
 }
 

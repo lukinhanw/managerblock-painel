@@ -3,10 +3,11 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import Api from "../Api";
 import useAuth from "../Context/hook_useAuth";
 import { NotificationContext } from "../Context/NotificationContext";
+import '../Components/css/Sidebar.css'; // Importando o CSS para estilos avançados
 
 const Sidebar = () => {
     const navigate = useNavigate();
-    const location = useLocation(); // Importação do hook useLocation
+    const location = useLocation();
     const { signout } = useAuth();
     const { temNotificacao } = useContext(NotificationContext);
     const [dadosInfoUser, setDadosInfoUser] = useState(null);
@@ -32,18 +33,13 @@ const Sidebar = () => {
         fetchData();
     }, []);
 
-    // Função para alternar o menu, garantindo que apenas um esteja aberto por vez
     const toggleMenu = (name) => {
-        setMenuOpen((prevState) => {
-            if (prevState[name]) {
-                return {};
-            } else {
-                return { [name]: true };
-            }
-        });
+        setMenuOpen((prevState) => ({
+            ...prevState,
+            [name]: !prevState[name]
+        }));
     };
 
-    // Função para mapear rotas aos nomes dos menus
     const routeToMenuName = (path) => {
         if (path.startsWith('/novo-codigo') || path.startsWith('/listar-codigos')) {
             return 'codigo';
@@ -62,7 +58,6 @@ const Sidebar = () => {
         }
     };
 
-    // useEffect para atualizar o menu aberto com base na rota atual
     useEffect(() => {
         const menuName = routeToMenuName(location.pathname);
         if (menuName) {
@@ -75,31 +70,34 @@ const Sidebar = () => {
     const [isActive, setIsActive] = useState(false);
     const handleButtonClick = () => {
         setIsActive(!isActive);
-
-        const sidebar = document.querySelector('.sidebar-wrapper');
-        const sidebarClose = document.querySelector('.sidebar-close');
-
-        sidebarClose.addEventListener('click', function () {
-            sidebar.classList.toggle('active');
-        });
     };
 
     const [info, setInfo] = useState(null);
     useEffect(() => {
+        const cachedInfo = JSON.parse(localStorage.getItem('info'));
+        if (cachedInfo) {
+            setInfo(cachedInfo);
+        }
+
         Api.get(`info-public`).then((response) => {
-            setInfo(response.data[0]);
+            const newInfo = response.data[0];
+            if (!cachedInfo || cachedInfo.logo !== newInfo.logo) {
+                localStorage.setItem('info', JSON.stringify(newInfo));
+                setInfo(newInfo);
+            }
         });
     }, []);
 
     return (
         <>
-            <aside className="sidebar-wrapper">
+            <aside className={`sidebar-wrapper ${isActive ? 'active' : ''}`}>
                 <div className="sidebar-header">
-                    <div className="logo-icon">
-                        <img src={info && info.logo} className="logo-img" alt="" />
-                    </div>
-                    <div className="logo-name flex-grow-1">
-                        <h5 className="mb-0">{data.titulo_painel}</h5>
+                    <div className="logo-icon" style={{ textAlign: 'center', width: '100%' }}>
+                        {info.logo && info.logo.length > 10 ? (
+                            <img src={info.logo} className="logo-img" alt="" />
+                        ) : (
+                            <h5 className="mb-0">{info && info.titulo_painel}</h5>
+                        )}
                     </div>
                     <div className="sidebar-close" onClick={handleButtonClick}>
                         <span className="material-symbols-outlined">close</span>
@@ -120,7 +118,7 @@ const Sidebar = () => {
                                                 Painel de Controle
                                             </li>
 
-                                            <li>
+                                            <li className={location.pathname === '/' ? 'active' : ''}>
                                                 <Link to="/">
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -138,7 +136,7 @@ const Sidebar = () => {
                                             </li>
 
                                             {/* Menu Código */}
-                                            <li className={data.exibir_codigos === '0' ? 'd-none' : ''}>
+                                            <li className={`${data.exibir_codigos === '0' ? 'd-none' : ''} ${menuOpen.codigo ? 'mm-active' : ''}`}>
                                                 <Link to="#" onClick={() => toggleMenu("codigo")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -156,7 +154,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.codigo && (
                                                     <ul className="ms-3">
-                                                        <li>
+                                                        <li className={location.pathname === '/novo-codigo' ? 'active' : ''}>
                                                             <Link to="/novo-codigo">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -164,7 +162,7 @@ const Sidebar = () => {
                                                                 Novo Código
                                                             </Link>
                                                         </li>
-                                                        <li>
+                                                        <li className={location.pathname === '/listar-codigos' ? 'active' : ''}>
                                                             <Link to="/listar-codigos">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -177,7 +175,7 @@ const Sidebar = () => {
                                             </li>
 
                                             {/* Menu Usuários */}
-                                            <li className={data.exibir_usuarios === '0' ? 'd-none' : ''}>
+                                            <li className={`${data.exibir_usuarios === '0' ? 'd-none' : ''} ${menuOpen.usuario ? 'mm-active' : ''}`}>
                                                 <Link to="#" onClick={() => toggleMenu("usuario")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -194,15 +192,15 @@ const Sidebar = () => {
 
                                                 {menuOpen.usuario && (
                                                     <ul className="ms-3">
-                                                        <li>
-                                                            <Link to="/novo-usuario" f>
+                                                        <li className={location.pathname === '/novo-usuario' ? 'active' : ''}>
+                                                            <Link to="/novo-usuario">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
                                                                 </span>
                                                                 Novo Usuário
                                                             </Link>
                                                         </li>
-                                                        <li>
+                                                        <li className={location.pathname === '/listar-usuarios' ? 'active' : ''}>
                                                             <Link to="/listar-usuarios">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -215,7 +213,7 @@ const Sidebar = () => {
                                             </li>
 
                                             {/* Menu Teste */}
-                                            <li>
+                                            <li className={menuOpen.teste ? 'mm-active' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("teste")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -232,7 +230,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.teste && (
                                                     <ul className="ms-3">
-                                                        <li>
+                                                        <li className={location.pathname === '/novo-teste' ? 'active' : ''}>
                                                             <Link to="/novo-teste">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -246,7 +244,7 @@ const Sidebar = () => {
 
                                             {/* Menu Revendedores */}
                                             {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
-                                                <li>
+                                                <li className={menuOpen.revendedores ? 'mm-active' : ''}>
                                                     <Link to="#" onClick={() => toggleMenu("revendedores")}>
                                                         <div className="parent-icon">
                                                             <span className="material-symbols-outlined">
@@ -263,7 +261,7 @@ const Sidebar = () => {
 
                                                     {menuOpen.revendedores && (
                                                         <ul className="ms-3">
-                                                            <li>
+                                                            <li className={location.pathname === '/novo-revendedor' ? 'active' : ''}>
                                                                 <Link to="/novo-revendedor">
                                                                     <span className="material-symbols-outlined">
                                                                         subdirectory_arrow_right
@@ -272,7 +270,7 @@ const Sidebar = () => {
                                                                 </Link>
                                                             </li>
 
-                                                            <li>
+                                                            <li className={location.pathname === '/listar-revendedores' ? 'active' : ''}>
                                                                 <Link to="/listar-revendedores">
                                                                     <span className="material-symbols-outlined">
                                                                         subdirectory_arrow_right
@@ -291,7 +289,7 @@ const Sidebar = () => {
                                                     <li className="menu-label mt-3 mb-2">
                                                         Pagamentos
                                                     </li>
-                                                    <li>
+                                                    <li className={menuOpen.pagamento ? 'mm-active' : ''}>
                                                         <Link to="#" onClick={() => toggleMenu("pagamento")}>
                                                             <div className="parent-icon">
                                                                 <span className="material-symbols-outlined"> paid </span>
@@ -306,7 +304,7 @@ const Sidebar = () => {
 
                                                         {menuOpen.pagamento && (
                                                             <ul className="ms-3">
-                                                                <li>
+                                                                <li className={location.pathname === '/logs-pagamentos' ? 'active' : ''}>
                                                                     <Link to="/logs-pagamentos">
                                                                         <span className="material-symbols-outlined">
                                                                             subdirectory_arrow_right
@@ -325,7 +323,7 @@ const Sidebar = () => {
                                             </li>
 
                                             {/* Menu Logs do Sistema */}
-                                            <li>
+                                            <li className={menuOpen.logs ? 'mm-active' : ''}>
                                                 <Link to="#" onClick={() => toggleMenu("logs")}>
                                                     <div className="parent-icon">
                                                         <span className="material-symbols-outlined">
@@ -342,7 +340,7 @@ const Sidebar = () => {
 
                                                 {menuOpen.logs && (
                                                     <ul className="ms-3">
-                                                        <li>
+                                                        <li className={location.pathname === '/logs-creditos' ? 'active' : ''}>
                                                             <Link to="/logs-creditos">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -350,7 +348,7 @@ const Sidebar = () => {
                                                                 Logs de Créditos
                                                             </Link>
                                                         </li>
-                                                        <li>
+                                                        <li className={location.pathname === '/logs-acoes' ? 'active' : ''}>
                                                             <Link to="/logs-acoes">
                                                                 <span className="material-symbols-outlined">
                                                                     subdirectory_arrow_right
@@ -368,7 +366,7 @@ const Sidebar = () => {
 
                                             {/* Menu Ajustes */}
                                             {dadosInfoUser && dadosInfoUser.id_dono === 0 && (
-                                                <li>
+                                                <li className={location.pathname === '/ajustes' ? 'active' : ''}>
                                                     <Link to="/ajustes">
                                                         <div className="parent-icon">
                                                             <span className="material-symbols-outlined">
@@ -417,6 +415,9 @@ const Sidebar = () => {
                 </Link>
 
             </aside >
+            <button className="btn-toggle-menu" onClick={handleButtonClick}>
+                <span className="material-symbols-outlined">menu</span>
+            </button>
         </>
     );
 };

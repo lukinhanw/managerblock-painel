@@ -3,24 +3,37 @@ import { useForm } from 'react-hook-form';
 import Api from '../Api';
 import useAuth from '../Context/hook_useAuth';
 import { v4 as uuidv4 } from 'uuid';
+import '../Components/css/Login.css';
+
+const VERSION = '2.1.0';
 
 const Login = () => {
     const [status, setStatus] = useState({ success: false, message: '' });
     const { signin } = useAuth();
     const [info, setInfo] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const {
         register,
         handleSubmit,
-        formState: { errors }
-    } = useForm();
+        formState: { errors, isValid },
+    } = useForm({ mode: 'onChange' });
 
     useEffect(() => {
         const fetchInfo = async () => {
             try {
+                const cachedInfo = JSON.parse(localStorage.getItem('info'));
+                if (cachedInfo) {
+                    setInfo(cachedInfo);
+                }
+
                 const response = await Api.get('info-public');
                 if (response.data && response.data.length > 0) {
-                    setInfo(response.data[0]);
+                    const newInfo = response.data[0];
+                    if (!cachedInfo || cachedInfo.logo !== newInfo.logo) {
+                        localStorage.setItem('info', JSON.stringify(newInfo));
+                        setInfo(newInfo);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching info:', error);
@@ -30,107 +43,133 @@ const Login = () => {
         fetchInfo();
     }, []);
 
-    useEffect(() => {
-        if (info) {
-            document.body.style.backgroundImage = `url(${info.background})`;
-            document.body.style.backgroundRepeat = "no-repeat";
-            document.body.style.backgroundSize = "cover";
-        }
-
-        return () => {
-            document.body.style.backgroundImage = "";
-            document.body.style.backgroundRepeat = "";
-            document.body.style.backgroundSize = "";
-        };
-    }, [info]);
-
     const onSubmit = async (dados) => {
+        setLoading(true);
         try {
             const token = uuidv4();
             const response = await Api.put('login', { ...dados, token });
             
-            if (response.data && response.data.length > 0) {
-                setStatus({
-                    success: true,
-                    message: "Credenciais aceitas, fazendo login..."
-                });
+            setTimeout(() => {
+                if (response.data && response.data.length > 0) {
+                    setStatus({
+                        success: true,
+                        message: "Credenciais aceitas, fazendo login..."
+                    });
 
-                signin({
-                    nome: response.data[0].nome,
-                    idUsuario: response.data[0].id,
-                    token: token
-                }, true);
-            }
+                    signin({
+                        nome: response.data[0].nome,
+                        idUsuario: response.data[0].id,
+                        token: token
+                    }, true);
+                }
+                setLoading(false);
+            }, 500);
         } catch (error) {
-            setStatus({
-                success: false,
-                message: error.data?.error || "Erro ao fazer login. Tente novamente."
-            });
+            setTimeout(() => {
+                setStatus({
+                    success: false,
+                    message: error.data?.error || "Erro ao fazer login. Tente novamente."
+                });
+                setLoading(false);
+            }, 500);
         }
     };
 
     return (
-        <div>
-            <div className="container-fluid my-5">
-                <div className="row">
-                    <div className="col-12 col-md-8 col-lg-6 col-xl-5 col-xxl-4 mx-auto">
-                        <div className="card border-3">
-                            <div className="card-body p-5">
-                                {info && (
-                                    <>
-                                        <img src={info.logo} className="mb-4" height="100" alt="Logo" />
-                                        <h4 className="fw-bold">{info.titulo_painel}</h4>
-                                    </>
-                                )}
-                                <p className="mb-0">Insira suas credenciais para acessar sua conta</p>
-                                {status.message && (
-                                    <div className={`alert ${status.success ? 'alert-success' : 'alert-danger'} alert-dismissible mt-4`} role="alert">
-                                        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        <div className="alert-icon">
-                                            <i className="far fa-fw fa-bell"></i>
-                                        </div>
-                                        <div className="alert-message">
-                                            {status.message}
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="form-body mt-4">
-                                    <form className="row g-3" onSubmit={handleSubmit(onSubmit)}>
-                                        <div className="col-12">
-                                            <label className="form-label">Usuário</label>
-                                            <input 
-                                                className="form-control" 
-                                                {...register("usuario", { required: true })} 
-                                            />
-                                            {errors.usuario && <small>Campo usuário é obrigatório.</small>}
-                                        </div>
-                                        <div className="col-12">
-                                            <label className="form-label">Senha</label>
-                                            <input 
-                                                type="password" 
-                                                className="form-control" 
-                                                {...register("senha", { required: true })} 
-                                            />
-                                            {errors.senha && <small>Campo senha é obrigatório.</small>}
-                                        </div>
-                                        <div className="col-12 mt-4">
-                                            <div className="d-grid">
-                                                <button type="submit" className="btn btn-primary">Entrar</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+        <div className="login-container">
+            <div className="login-background-effects">
+                <div className="gradient-sphere"></div>
+                <div className="gradient-sphere secondary"></div>
+            </div>
+            
+            <div className="login-card">
+                <div className="login-card-body">
+                    {info && (
+                        <div className="brand-container animate-fade-in">
+                            {info.logo && info.logo.length > 10 ? (
+                                <img src={info.logo} className="login-logo" alt="Logo" />
+                            ) : (
+                                <h4 className="login-title">{info.titulo_painel}</h4>
+                            )}
+                            <p className="welcome-text">
+                                Bem-vindo ao seu painel de controle
+                                <span className="welcome-subtitle">
+                                    Faça login para acessar sua conta
+                                </span>
+                            </p>
                         </div>
-                    </div>
+                    )}
+
+                    {status.message && (
+                        <div className={`alert-custom ${status.success ? 'success' : 'error'}`}>
+                            <span className="alert-icon">
+                                {status.success ? '✓' : '⚠'}
+                            </span>
+                            <span className="alert-message">{status.message}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="login-form">
+                        <div className="form-group">
+                            <input
+                                type="text"
+                                className={`form-input ${errors.usuario ? 'error' : ''}`}
+                                placeholder="Usuário"
+                                {...register("usuario", {
+                                    required: "Usuário é obrigatório",
+                                    minLength: {
+                                        value: 3,
+                                        message: "Mínimo de 3 caracteres"
+                                    }
+                                })}
+                            />
+                            {errors.usuario && (
+                                <span className="error-message">{errors.usuario.message}</span>
+                            )}
+                        </div>
+
+                        <div className="form-group mt-2">
+                            <input
+                                type="password"
+                                className={`form-input ${errors.senha ? 'error' : ''}`}
+                                placeholder="Senha"
+                                {...register("senha", {
+                                    required: "Senha é obrigatória",
+                                    minLength: {
+                                        value: 4,
+                                        message: "Mínimo de 4 caracteres"
+                                    }
+                                })}
+                            />
+                            {errors.senha && (
+                                <span className="error-message">{errors.senha.message}</span>
+                            )}
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            className="login-button mt-2" 
+                            disabled={loading || !isValid}
+                        >
+                            {loading ? (
+                                <div className="button-content">
+                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    <span>Entrando...</span>
+                                </div>
+                            ) : (
+                                <span>Entrar</span>
+                            )}
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <footer className="footer bg-dark fixed-bottom text-white text-center py-3">
+            <footer className="footer">
                 <p>
-                    {info && info.titulo_painel} &copy; {new Date().getFullYear()} - Todos os direitos reservados.
+                    {info && info.titulo_painel} &copy; {new Date().getFullYear()}
                     <br />
                     Desenvolvido por 8Tech 🧡
+                    <span className="version">v{VERSION}</span>
                 </p>
             </footer>
         </div>

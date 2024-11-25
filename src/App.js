@@ -84,25 +84,30 @@ function App() {
 		}
 	);
 
-
-
 	useEffect(() => {
+		const cachedInfo = JSON.parse(localStorage.getItem('info'));
+		if (cachedInfo) {
+			setInfo(cachedInfo);
+		}
 
 		Api.get('info-public')
 			.then(response => {
-				setInfo(response.data[0])
+				const newInfo = response.data[0];
+				if (!cachedInfo || cachedInfo.background !== newInfo.background || cachedInfo.logo !== newInfo.logo) {
+					localStorage.setItem('info', JSON.stringify(newInfo));
+					setInfo(newInfo);
+				}
 				if (token) {
-					setIsLoading(false)
+					setIsLoading(false);
 				} else {
-					signout()
-					setIsLoading(false)
+					signout();
+					setIsLoading(false);
 				}
 			})
 			.catch(error => {
 				console.error(error);
 				setIsLoading(false);
 			});
-
 	}, [signout, token]);
 
 	const LoadingScreen = () => (

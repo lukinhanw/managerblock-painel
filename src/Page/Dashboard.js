@@ -179,7 +179,7 @@ const Dashboard = () => {
 
     const getUsuariosNovos = useCallback(async () => {
         try {
-            const response = await Api.get(`/listar-codigos-intervalo/${idUsuario}`);
+            const response = await Api.get(`/listar-usuarios-intervalo/${idUsuario}`);
             let data = response.data;
     
             let intervalos = {
@@ -211,7 +211,8 @@ const Dashboard = () => {
                 datasets: [{
                     label: 'Novos usuários',
                     data: Object.values(intervalos),
-                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                    backgroundColor: 'rgba(255, 51, 102, 0.5)',
+                    borderColor: 'rgba(255, 51, 102, 1)',
                     borderWidth: 1
                 }]
             });
@@ -229,10 +230,29 @@ const Dashboard = () => {
     const options = {
         scales: {
             x: {
-                type: 'category'
+                type: 'category',
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: '#bdc3c7'
+                }
             },
             y: {
-                type: 'linear'
+                type: 'linear',
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: '#bdc3c7'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#ecf0f1'
+                }
             }
         }
     };
@@ -241,68 +261,62 @@ const Dashboard = () => {
         <main className="page-content">
             <h6 className="text-uppercase">Dashboard</h6>
             <hr />
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-4 row-cols-xxl-4">
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-4 row-cols-xxl-4 mb-4">
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-primary border-4">
-                        <div className="card-body">
+                    <div className="modern-card">
+                        <div className="card-content">
                             <div className="d-flex align-items-center">
-                                <div className="">
-                                    <p className="mb-1">Códigos / Usuários</p>
-                                    <h4 className="mb-0 text-primary">{(dadosInfoUser && dadosInfoUser.quantidade_codigos) || '0'}</h4>
+                                <div>
+                                    <p className="card-label">Códigos / Usuários</p>
+                                    <h4 className="card-value">{(dadosInfoUser && dadosInfoUser.quantidade_codigos) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-primary text-white">
-                                    <span className="material-symbols-outlined"> password </span>
+                                <div className="card-icon primary-gradient">
+                                    <span className="material-symbols-outlined">password</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-light border-4">
-                        <div className="card-body">
+                    <div className="modern-card">
+                        <div className="card-content">
                             <div className="d-flex align-items-center">
-                                <div className="">
-                                    <p className="mb-1">Testes</p>
-                                    <h4 className="mb-0 text-light">{(dadosInfoUser && dadosInfoUser.quantidade_testes) || '0'}</h4>
+                                <div>
+                                    <p className="card-label">Testes</p>
+                                    <h4 className="card-value">{(dadosInfoUser && dadosInfoUser.quantidade_testes) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-light text-white">
-                                    <span className="material-symbols-outlined">
-                                        edit_document
-                                    </span>
+                                <div className="card-icon secondary-gradient">
+                                    <span className="material-symbols-outlined">edit_document</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-warning border-4">
-                        <div className="card-body">
+                    <div className="modern-card">
+                        <div className="card-content">
                             <div className="d-flex align-items-center">
-                                <div className="">
-                                    <p className="mb-1">Revendedores</p>
-                                    <h4 className="mb-0 text-warning">{(dadosInfoUser && dadosInfoUser.quantidade_revendedores) || '0'}</h4>
+                                <div>
+                                    <p className="card-label">Revendedores</p>
+                                    <h4 className="card-value">{(dadosInfoUser && dadosInfoUser.quantidade_revendedores) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-warning text-white">
-                                    <span className="material-symbols-outlined">
-                                        group
-                                    </span>
+                                <div className="card-icon purple-gradient">
+                                    <span className="material-symbols-outlined">group</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card radius-10 border-0 border-start border-success border-4">
-                        <div className="card-body">
+                    <div className="modern-card">
+                        <div className="card-content">
                             <div className="d-flex align-items-center">
-                                <div className="">
-                                    <p className="mb-1">Créditos</p>
-                                    <h4 className="mb-0 text-success">{(dadosInfoUser && dadosInfoUser.creditos) || '0'}</h4>
+                                <div>
+                                    <p className="card-label">Créditos</p>
+                                    <h4 className="card-value">{(dadosInfoUser && dadosInfoUser.creditos) || '0'}</h4>
                                 </div>
-                                <div className="ms-auto widget-icon bg-success text-white">
-                                    <span className="material-symbols-outlined">
-                                        monetization_on
-                                    </span>
+                                <div className="card-icon coral-gradient">
+                                    <span className="material-symbols-outlined">monetization_on</span>
                                 </div>
                             </div>
                         </div>
@@ -326,7 +340,7 @@ const Dashboard = () => {
                         <div className="card-header">
                             <div className="row">
                                 <div className="col">
-                                    <h5 className="mb-0">Aviso</h5>
+                                    <h6 className="mb-0">Aviso</h6>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +354,7 @@ const Dashboard = () => {
                         <div className="card-header">
                             <div className="row">
                                 <div className="col">
-                                    <h5 className="mb-0">Novos Usuários</h5>
+                                    <h6 className="mb-0">Novos Usuários</h6>
                                 </div>
                             </div>
                         </div>
@@ -354,7 +368,7 @@ const Dashboard = () => {
                         <div className="card-header">
                             <div className="row">
                                 <div className="col">
-                                    <h5 className="mb-0">Códigos / Usuários vencendo</h5>
+                                    <h6 className="mb-0">Códigos / Usuários vencendo</h6>
                                 </div>
                             </div>
                         </div>

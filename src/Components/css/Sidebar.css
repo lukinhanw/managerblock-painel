@@ -1,0 +1,144 @@
+.sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    color: #fff;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    z-index: 1000;
+}
+
+.sidebar-wrapper.active {
+    transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+    .sidebar-wrapper {
+        transform: translateX(0);
+    }
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #23272b;
+}
+
+.sidebar-close {
+    cursor: pointer;
+}
+
+.sidebar-nav {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-nav ul li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-nav ul li a:hover,
+.sidebar-nav ul li.active > a {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.sidebar-nav ul li a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 51, 102, 0.5),
+        rgba(72, 52, 212, 0.5)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
+}
+
+.sidebar-nav ul li a:hover::before,
+.sidebar-nav ul li.active > a::before {
+    opacity: 0.1;
+}
+
+.sidebar-nav ul li a:hover .material-symbols-outlined,
+.sidebar-nav ul li.active > a .material-symbols-outlined {
+    color: #ff3366;
+    text-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
+}
+
+/* Adicione um efeito de borda gradiente ao item ativo */
+.sidebar-nav ul li.active > a {
+    position: relative;
+}
+
+.sidebar-nav ul li.active > a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+        to bottom,
+        #ff3366,
+        #686de0
+    );
+    box-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
+}
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    background-color: #23272b;
+}
+
+.btn-toggle-menu {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.btn-toggle-menu:hover {
+    background: rgba(255, 51, 102, 0.2);
+    transform: scale(1.05);
+}
