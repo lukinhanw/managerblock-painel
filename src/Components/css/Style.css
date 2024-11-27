@@ -1,27 +1,3 @@
-@import '../../../node_modules/bootstrap/scss/functions';
-@import '../../../node_modules/bootstrap/scss/variables';
-@import '../../../node_modules/bootstrap/scss/mixins';
-@import '../../../node_modules/bootstrap/scss/buttons';
-
-// Configuração de fonte no início do arquivo
-:root {
-    --font-family-sans-serif: 'Rajdhani', sans-serif;
-}
-
-body {
-    font-family: var(--font-family-sans-serif);
-    letter-spacing: 0.3px;
-}
-
-$theme-colors: (
-    "primary": #4cb2bd,
-    "secondary": #dddddd,
-    "success": #22bb33,
-    "warning": #f0ad4e,
-    "danger": #bb2124,
-    "dark": #363a3f
-);
-
 .btn-secondary {
     border-color: lighten(map-get($theme-colors, secondary), 10%) !important;
     color: #363a3f !important;
@@ -63,24 +39,19 @@ $theme-colors: (
     white-space: nowrap;
 }
 
-/* Adicione este CSS para a animação de piscar */
 .blink {
     animation: fade-animation 2s ease-in-out infinite;
 }
 
 @keyframes fade-animation {
-
-    0%,
-    100% {
+    0%, 100% {
         opacity: 1;
     }
-
     50% {
         opacity: 0.2;
     }
 }
 
-// Novos estilos para cards modernos
 .modern-card {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -97,12 +68,12 @@ $theme-colors: (
         right: 0;
         bottom: 0;
         border-radius: 15px;
-        padding: 2px; // Espessura da borda
-        // background: linear-gradient(45deg,
-        //         rgba(255, 51, 102, 0.5),
-        //         rgba(255, 107, 107, 0.5),
-        //         rgba(72, 52, 212, 0.5),
-        //         rgba(104, 109, 224, 0.5));
+        padding: 2px;
+        background: linear-gradient(45deg,
+                rgba(255, 51, 102, 0.5),
+                rgba(255, 107, 107, 0.5),
+                rgba(72, 52, 212, 0.5),
+                rgba(104, 109, 224, 0.5));
         -webkit-mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
@@ -119,14 +90,6 @@ $theme-colors: (
         box-shadow:
             0 0 20px rgba(255, 51, 102, 0.2),
             0 0 30px rgba(72, 52, 212, 0.2);
-
-        &::before {
-            background: linear-gradient(45deg,
-                    rgba(255, 51, 102, 0.8),
-                    rgba(255, 107, 107, 0.8),
-                    rgba(72, 52, 212, 0.8),
-                    rgba(104, 109, 224, 0.8));
-        }
     }
 }
 
@@ -162,7 +125,6 @@ $theme-colors: (
     }
 }
 
-// Gradientes para os ícones
 .primary-gradient {
     background: linear-gradient(135deg, #ff3366, #ff6b6b);
 }
@@ -180,18 +142,14 @@ $theme-colors: (
 }
 
 @keyframes neonPulse {
-
-    0%,
-    100% {
+    0%, 100% {
         opacity: 1;
     }
-
     50% {
         opacity: 0.5;
     }
 }
 
-// Estilo moderno para cards e tabelas
 .card {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -209,11 +167,6 @@ $theme-colors: (
         bottom: 0;
         border-radius: 16px;
         padding: 2px;
-        background: linear-gradient(45deg,
-                rgba(255, 51, 102, 0.3),
-                rgba(255, 107, 107, 0.3),
-                rgba(72, 52, 212, 0.3),
-                rgba(104, 109, 224, 0.3));
         -webkit-mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
@@ -242,7 +195,6 @@ $theme-colors: (
     }
 }
 
-// Estilo moderno para tabelas
 .table {
     color: #ecf0f1;
     background: rgba(255, 255, 255, 0.02);
@@ -259,18 +211,6 @@ $theme-colors: (
             left: 0;
             right: 0;
             bottom: 0;
-            background: -webkit-linear-gradient(45deg,
-                    rgba(255, 51, 102, 0.15),
-                    rgba(72, 52, 212, 0.15));
-            background: -moz-linear-gradient(45deg,
-                    rgba(255, 51, 102, 0.15),
-                    rgba(72, 52, 212, 0.15));
-            background: -o-linear-gradient(45deg,
-                    rgba(255, 51, 102, 0.15),
-                    rgba(72, 52, 212, 0.15));
-            background: -ms-linear-gradient(45deg,
-                    rgba(255, 51, 102, 0.15),
-                    rgba(72, 52, 212, 0.15));
             background: linear-gradient(45deg,
                     rgba(255, 51, 102, 0.15),
                     rgba(72, 52, 212, 0.15));
@@ -341,7 +281,6 @@ $theme-colors: (
     }
 }
 
-// Estilo moderno para inputs e selects
 .form-control,
 .form-select {
     background: rgba(255, 255, 255, 0.05);
@@ -362,7 +301,6 @@ $theme-colors: (
     }
 }
 
-// Estilo moderno para paginação
 .pagination {
     .page-item {
         .page-link {
@@ -385,7 +323,6 @@ $theme-colors: (
     }
 }
 
-// Estilo moderno para alertas
 .alert {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -425,7 +362,3 @@ $theme-colors: (
         background: linear-gradient(135deg, #e74c3c, #c0392b);
     }
 }
-
-
-
-@import "~bootstrap/scss/bootstrap";

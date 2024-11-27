@@ -28,8 +28,13 @@ const ListarCodigos = () => {
     const [filterPending, setFilterPending] = useState(false);
     const [filterServer, setFilterServer] = useState('');
     const [uniqueServers, setUniqueServers] = useState([]);
+    const [filterExpiration, setFilterExpiration] = useState('todos');
+    const [filterStatus, setFilterStatus] = useState('todos');
+    const [filterOwner, setFilterOwner] = useState('');
+    const [uniqueOwners, setUniqueOwners] = useState([]);
 
     const idUsuario = userInfo ? userInfo.id : null;
+    const isAdmin = userInfo && userInfo.id_dono === 0;
     const renovacoes_automaticas = userInfo ? userInfo.renovacoes_automaticas : 0;
 
     useEffect(() => {
@@ -202,6 +207,13 @@ const ListarCodigos = () => {
         }
     }, [data]);
 
+    useEffect(() => {
+        if (data && data.length > 0) {
+            const owners = [...new Set(data.map(item => item.nome_dono))].filter(Boolean);
+            setUniqueOwners(owners);
+        }
+    }, [data]);
+
     const columns = React.useMemo(
         () => [
             {
@@ -318,8 +330,8 @@ const ListarCodigos = () => {
                         Cell: ({ cell: { value }, row: { original } }) => {
                             return (
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Link 
-                                        className='fs-4 me-3' 
+                                    <Link
+                                        className='fs-4 me-3'
                                         to={`/editar-codigo/${original.id}`}
                                         data-tooltip-id="edit-tooltip"
                                         data-tooltip-content="Editar código"
@@ -328,11 +340,11 @@ const ListarCodigos = () => {
                                             edit
                                         </span>
                                     </Link>
-                                    <Link 
-                                        className='fs-4 me-3' 
-                                        onClick={() => { 
-                                            setModalData({ nome: original.codigo, id: original.id, token: token }); 
-                                            original.renovacoes_automaticas ? setShowModalRenewAuth(true) : setShowModalRenew(true); 
+                                    <Link
+                                        className='fs-4 me-3'
+                                        onClick={() => {
+                                            setModalData({ nome: original.codigo, id: original.id, token: token });
+                                            original.renovacoes_automaticas ? setShowModalRenewAuth(true) : setShowModalRenew(true);
                                         }}
                                         data-tooltip-id="renew-tooltip"
                                         data-tooltip-content="Renovar código"
@@ -354,11 +366,11 @@ const ListarCodigos = () => {
                                             {original.status === 1 ? 'lock_open' : 'lock'}
                                         </span>
                                     </Link>
-                                    <Link 
-                                        className='fs-4 me-3' 
-                                        onClick={() => { 
-                                            setModalData({ nome: original.codigo, id: original.id }); 
-                                            setShowModalDelete(true); 
+                                    <Link
+                                        className='fs-4 me-3'
+                                        onClick={() => {
+                                            setModalData({ nome: original.codigo, id: original.id });
+                                            setShowModalDelete(true);
                                         }}
                                         data-tooltip-id="delete-tooltip"
                                         data-tooltip-content="Deletar código"
@@ -391,20 +403,53 @@ const ListarCodigos = () => {
                     <div className="col-lg-12 mx-auto">
                         <div className="card">
                             <div className="card-header px-4 py-3 bg-transparent">
-                                <div className="d-flex justify-content-between align-items-center">
+                                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                     <h5 className="mb-0">Todos os códigos</h5>
-                                    <select 
-                                        className="form-select w-auto"
-                                        value={filterServer}
-                                        onChange={(e) => setFilterServer(e.target.value)}
-                                    >
-                                        <option value="">Todos os servidores</option>
-                                        {uniqueServers.map(server => (
-                                            <option key={server} value={server}>
-                                                {server}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="d-flex gap-2 flex-wrap">
+                                        <select
+                                            className="form-select w-auto"
+                                            value={filterServer}
+                                            onChange={(e) => setFilterServer(e.target.value)}
+                                        >
+                                            <option value="">Todos os servidores</option>
+                                            {uniqueServers.map(server => (
+                                                <option key={server} value={server}>{server}</option>
+                                            ))}
+                                        </select>
+
+                                        <select
+                                            className="form-select w-auto"
+                                            value={filterExpiration}
+                                            onChange={(e) => setFilterExpiration(e.target.value)}
+                                        >
+                                            <option value="todos">Todos os vencimentos</option>
+                                            <option value="expirados">Expirados</option>
+                                            <option value="3dias">Próximos 3 dias</option>
+                                            <option value="7dias">Próximos 7 dias</option>
+                                        </select>
+
+                                        <select
+                                            className="form-select w-auto"
+                                            value={filterStatus}
+                                            onChange={(e) => setFilterStatus(e.target.value)}
+                                        >
+                                            <option value="todos">Todos os status</option>
+                                            <option value="0">Ativos</option>
+                                            <option value="1">Bloqueados</option>
+                                        </select>
+                                        {isAdmin && (
+                                            <select
+                                                className="form-select w-auto"
+                                                value={filterOwner}
+                                                onChange={(e) => setFilterOwner(e.target.value)}
+                                            >
+                                                <option value="">Todos os donos</option>
+                                                {uniqueOwners.map(owner => (
+                                                    <option key={owner} value={owner}>{owner}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <div className="card-body p-4">
@@ -419,7 +464,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} serverFilter={filterServer} />}
+                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} serverFilter={filterServer} expirationFilter={filterExpiration} statusFilter={filterStatus} ownerFilter={filterOwner} />}
                             </div>
                         </div>
                     </div>

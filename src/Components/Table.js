@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import { Link } from "react-router-dom";
 
-function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false, showPagamentosFilter = false, serverFilter }) {
+function Table({ columns, data = [], length = 10, showFilter = true, showMenu = true, showPendingFilter = false, showPagamentosFilter = false, serverFilter, expirationFilter, statusFilter, ownerFilter }) {
     const [pendingFilter, setPendingFilter] = useState('todos');
     const [pagamentosFilter, setPagamentosFilter] = useState('todos');
 
@@ -21,8 +21,36 @@ function Table({ columns, data = [], length = 10, showFilter = true, showMenu = 
             filtered = filtered.filter(item => item.PB_status === pagamentosFilter);
         }
 
+        if (statusFilter !== 'todos') {
+            filtered = filtered.filter(item => item.status === parseInt(statusFilter));
+        }
+
+        if (ownerFilter) {
+            filtered = filtered.filter(item => item.nome_dono === ownerFilter);
+        }
+
+        if (expirationFilter !== 'todos') {
+            const currentDate = new Date();
+            filtered = filtered.filter(item => {
+                if (!item.data_validade) return false;
+                const validadeDate = new Date(item.data_validade);
+                const diffDays = Math.ceil((validadeDate - currentDate) / (1000 * 60 * 60 * 24));
+
+                switch (expirationFilter) {
+                    case 'expirados':
+                        return diffDays < 0;
+                    case '3dias':
+                        return diffDays >= 0 && diffDays <= 3;
+                    case '7dias':
+                        return diffDays > 3 && diffDays <= 7;
+                    default:
+                        return true;
+                }
+            });
+        }
+
         return filtered;
-    }, [data, pendingFilter, pagamentosFilter, serverFilter]);
+    }, [data, pendingFilter, pagamentosFilter, serverFilter, expirationFilter, statusFilter, ownerFilter]);
 
     const props = useTable(
         {

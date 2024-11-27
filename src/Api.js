@@ -25,24 +25,11 @@ Api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response) {
-            // Server responded with error status
-            return Promise.reject(error.response);
-        } else if (error.request) {
-            // Request made but no response received
-            return Promise.reject({
-                data: {
-                    error: "No response from server. Please check your connection."
-                }
-            });
-        } else {
-            // Error in request setup
-            return Promise.reject({
-                data: {
-                    error: "Error setting up request."
-                }
-            });
+        if (error.response && error.response.data.error === "Erro na API, token inválido.") {
+            localStorage.removeItem('user_token');
+            window.location.href = '/login';
         }
+        return Promise.reject(error);
     }
 );
 
