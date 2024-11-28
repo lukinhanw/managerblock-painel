@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { differenceInDays, format, parseISO } from 'date-fns';
-import Table from "../../Components/Table"
+import TableCodigos from "../../Components/TableCodigos"
 import { Link } from 'react-router-dom';
 import Api from '../../Api';
 import { Button, Modal } from 'react-bootstrap';
@@ -464,7 +464,7 @@ const ListarCodigos = () => {
                                         </div>
                                     </div>
                                 )}
-                                {data && data.length > 0 && <Table columns={columns} data={data} lenght={10} showPendingFilter={filterPending} serverFilter={filterServer} expirationFilter={filterExpiration} statusFilter={filterStatus} ownerFilter={filterOwner} />}
+                                {data && data.length > 0 && <TableCodigos columns={columns} data={data} lenght={10} showPendingFilter={filterPending} serverFilter={filterServer} expirationFilter={filterExpiration} statusFilter={filterStatus} ownerFilter={filterOwner} />}
                             </div>
                         </div>
                     </div>
