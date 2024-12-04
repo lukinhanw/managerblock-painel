@@ -4,6 +4,7 @@ import Api from '../Api';
 import useAuth from '../Context/hook_useAuth';
 import { v4 as uuidv4 } from 'uuid';
 import '../Components/css/Login.css';
+import { useNavigate } from 'react-router-dom';
 
 const VERSION = process.env.REACT_APP_VERSION || '1.0.0';
 
@@ -12,6 +13,8 @@ const Login = () => {
     const { signin } = useAuth();
     const [info, setInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [infoLogin, setInfoLogin] = useState({});
 
     const {
         register,
@@ -51,16 +54,7 @@ const Login = () => {
 
             setTimeout(() => {
                 if (response.data && response.data.length > 0) {
-                    setStatus({
-                        success: true,
-                        message: "Credenciais aceitas, fazendo login..."
-                    });
-
-                    signin({
-                        nome: response.data[0].nome,
-                        idUsuario: response.data[0].id,
-                        token: token
-                    }, true);
+                    setInfoLogin({ ...response.data[0], token });
                 }
                 setLoading(false);
             }, 500);
@@ -74,6 +68,25 @@ const Login = () => {
             }, 500);
         }
     };
+
+    useEffect(() => {
+        if (infoLogin && infoLogin.status === 0) {
+
+            signin({
+                nome: infoLogin.nome,
+                idUsuario: infoLogin.id,
+                token: infoLogin.token
+            }, true);
+
+        }
+
+        if (infoLogin && infoLogin.status === 1) {
+            setStatus({
+                success: false,
+                message: "Erro, código 171, contate seu administrador."
+            });
+        }
+    }, [infoLogin, signin, navigate]);
 
     return (
         <div className="login-container">

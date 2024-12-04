@@ -14,11 +14,11 @@ export const AuthProvider = ({ children }) => {
 
     const signin = (data, result) => {
         if (result) {
-            localStorage.setItem("user_token", JSON.stringify(data));
             setUser(data);
-            window.location.reload();
-            return;
+            localStorage.setItem("user_token", JSON.stringify(data));
+            return true; // Return true to indicate successful login
         }
+        return false;
     };
 
     const signout = () => {

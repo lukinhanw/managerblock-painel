@@ -8,17 +8,6 @@ const Api = axios.create({
     }
 });
 
-// Add request interceptor
-Api.interceptors.request.use(
-    (config) => {
-        // Add any request preprocessing here
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 // Add response interceptor
 Api.interceptors.response.use(
     (response) => {

@@ -12,17 +12,11 @@ const Header = () => {
     const [headerColor, setHeaderColor] = useState(localStorage.getItem('headerColor') || 'gradient1');
 
     useEffect(() => {
-        const cachedInfo = JSON.parse(localStorage.getItem('info'));
-        if (cachedInfo) {
-            setDadosInfoUser(cachedInfo);
-        }
-
         Api.get(`info/${idUsuario}`).then((response) => {
             const newInfo = response.data;
-            if (!cachedInfo || cachedInfo.logo !== newInfo.logo) {
-                localStorage.setItem('info', JSON.stringify(newInfo));
-                setDadosInfoUser(newInfo);
-            }
+            localStorage.setItem('info', JSON.stringify(newInfo));
+            setDadosInfoUser(newInfo);
+
         });
     }, [idUsuario]);
 
@@ -39,6 +33,9 @@ const Header = () => {
         setHeaderColor(color);
         localStorage.setItem('headerColor', color);
     };
+
+    console.log("a", dadosInfoUser);
+
 
     return (
         <header className={`top-header ${isActive ? 'active' : ''}`}>
